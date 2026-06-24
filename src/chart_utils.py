@@ -34,6 +34,26 @@ MODULE_LABELS = {
     "D. Risk Management and Resilience": "Risk Resilience",
     "E. Data Maturity and Smart Operation": "Data Maturity",
 }
+DATA_TYPE_KEYS = {
+    "actual": "data_quality.data_types.actual",
+    "public_disclosure": "data_quality.data_types.public_disclosure",
+    "public_collected": "data_quality.data_types.public_collected",
+    "survey": "data_quality.data_types.survey",
+    "manual_assessment": "data_quality.data_types.manual_assessment",
+    "mixed": "data_quality.data_types.mixed",
+    "simulated": "data_quality.data_types.simulated",
+    "unknown": "data_quality.data_types.unknown",
+}
+DATA_QUALITY_TABLE_KEYS = {
+    "assets": "data_quality.tables.assets",
+    "financial_metrics": "data_quality.tables.financial_metrics",
+    "operation_metrics": "data_quality.tables.operation_metrics",
+    "service_quality_metrics": "data_quality.tables.service_quality_metrics",
+    "risk_metrics": "data_quality.tables.risk_metrics",
+    "digital_maturity_metrics": "data_quality.tables.digital_maturity_metrics",
+    "data_dictionary": "data_quality.tables.data_dictionary",
+    "overall": "data_quality.tables.overall",
+}
 
 
 def _empty_figure(title: str) -> go.Figure:
@@ -45,6 +65,14 @@ def _empty_figure(title: str) -> go.Figure:
         height=360,
     )
     return fig
+
+
+def _translate_data_type(value: str) -> str:
+    return t(DATA_TYPE_KEYS.get(str(value), ""), str(value))
+
+
+def _translate_data_quality_table(value: str) -> str:
+    return t(DATA_QUALITY_TABLE_KEYS.get(str(value), ""), str(value))
 
 
 def make_score_bar_chart(total_scores_df: pd.DataFrame) -> go.Figure:
@@ -329,6 +357,149 @@ def make_score_change_chart(
         yaxis_title=t("labels.score"),
         template="plotly_white",
         height=390,
+        margin={"l": 20, "r": 20, "t": 60, "b": 20},
+    )
+    return fig
+
+
+def make_data_confidence_bar_chart(df: pd.DataFrame) -> go.Figure:
+    """Create a data confidence ranking chart."""
+    required = {"asset_name", "data_confidence_score", "data_confidence_level"}
+    if df.empty or not required.issubset(df.columns):
+        return _empty_figure(t("data_quality.confidence_ranking"))
+
+    plot_df = df.dropna(subset=["data_confidence_score"]).copy()
+    if plot_df.empty:
+        return _empty_figure(t("data_quality.confidence_ranking"))
+
+    plot_df["data_confidence_level_display"] = plot_df["data_confidence_level"].map(
+        lambda value: t(f"data_quality.levels.{str(value).lower().replace('-', '_').replace(' ', '_')}", str(value))
+    )
+    fig = px.bar(
+        plot_df.sort_values("data_confidence_score", ascending=False),
+        x="asset_name",
+        y="data_confidence_score",
+        color="data_confidence_level_display",
+        text="data_confidence_score",
+        title=t("data_quality.confidence_ranking"),
+        range_y=[0, 100],
+        color_discrete_sequence=px.colors.qualitative.Safe,
+    )
+    fig.update_traces(texttemplate="%{text:.1f}", textposition="outside")
+    fig.update_layout(
+        xaxis_title="",
+        yaxis_title=t("data_quality.data_confidence_score"),
+        legend_title_text=t("data_quality.data_confidence_level"),
+        template="plotly_white",
+        height=420,
+        margin={"l": 20, "r": 20, "t": 60, "b": 20},
+    )
+    return fig
+
+
+def make_data_quality_dimension_chart(asset_quality: dict) -> go.Figure:
+    """Create a five-dimension data quality bar chart for one asset."""
+    dimension_keys = [
+        ("completeness_score", t("data_quality.completeness")),
+        ("source_reliability_score", t("data_quality.source_reliability")),
+        ("traceability_score", t("data_quality.traceability")),
+        ("timeliness_score", t("data_quality.timeliness")),
+        ("coverage_score", t("data_quality.coverage")),
+    ]
+    rows = [
+        {"dimension": label, "score": asset_quality.get(key)}
+        for key, label in dimension_keys
+    ]
+    plot_df = pd.DataFrame(rows)
+    plot_df["score"] = pd.to_numeric(plot_df["score"], errors="coerce")
+    if plot_df["score"].dropna().empty:
+        return _empty_figure(t("data_quality.breakdown"))
+
+    fig = px.bar(
+        plot_df,
+        x="dimension",
+        y="score",
+        text="score",
+        title=t("data_quality.breakdown"),
+        range_y=[0, 100],
+        color="dimension",
+        color_discrete_sequence=px.colors.qualitative.Safe,
+    )
+    fig.update_traces(texttemplate="%{text:.1f}", textposition="outside")
+    fig.update_layout(
+        xaxis_title="",
+        yaxis_title=t("labels.score"),
+        template="plotly_white",
+        showlegend=False,
+        height=420,
+        margin={"l": 20, "r": 20, "t": 60, "b": 20},
+    )
+    return fig
+
+
+def make_data_type_distribution_chart(df: pd.DataFrame) -> go.Figure:
+    """Create an overall data_type distribution chart."""
+    required = {"table", "data_type", "count"}
+    if df.empty or not required.issubset(df.columns):
+        return _empty_figure(t("data_quality.data_type_distribution"))
+
+    plot_df = df[df["table"] == "overall"].copy()
+    if plot_df.empty:
+        plot_df = df.copy()
+    plot_df["count"] = pd.to_numeric(plot_df["count"], errors="coerce")
+    if plot_df["count"].dropna().empty:
+        return _empty_figure(t("data_quality.data_type_distribution"))
+    plot_df["data_type_display"] = plot_df["data_type"].map(_translate_data_type)
+
+    fig = px.bar(
+        plot_df.sort_values("count", ascending=False),
+        x="data_type_display",
+        y="count",
+        text="count",
+        title=t("data_quality.data_type_distribution"),
+        color="data_type_display",
+        color_discrete_sequence=px.colors.qualitative.Safe,
+    )
+    fig.update_traces(textposition="outside")
+    fig.update_layout(
+        xaxis_title=t("columns.data_type"),
+        yaxis_title=t("data_quality.count"),
+        template="plotly_white",
+        showlegend=False,
+        height=420,
+        margin={"l": 20, "r": 20, "t": 60, "b": 20},
+    )
+    return fig
+
+
+def make_missingness_chart(df: pd.DataFrame) -> go.Figure:
+    """Create a missingness chart by table."""
+    required = {"table", "missing_count"}
+    if df.empty or not required.issubset(df.columns):
+        return _empty_figure(t("data_quality.missingness_summary"))
+
+    plot_df = df.groupby("table", as_index=False)["missing_count"].sum()
+    plot_df["missing_count"] = pd.to_numeric(plot_df["missing_count"], errors="coerce")
+    if plot_df["missing_count"].dropna().empty:
+        return _empty_figure(t("data_quality.missingness_summary"))
+    plot_df["table_display"] = plot_df["table"].map(_translate_data_quality_table)
+
+    fig = px.bar(
+        plot_df.sort_values("missing_count", ascending=False),
+        x="table_display",
+        y="missing_count",
+        text="missing_count",
+        title=t("data_quality.missingness_summary"),
+        color="table_display",
+        color_discrete_sequence=px.colors.qualitative.Safe,
+    )
+    fig.update_traces(textposition="outside")
+    fig.update_layout(
+        xaxis_title=t("columns.table"),
+        yaxis_title=t("data_quality.missing_count"),
+        template="plotly_white",
+        showlegend=False,
+        height=420,
         margin={"l": 20, "r": 20, "t": 60, "b": 20},
     )
     return fig

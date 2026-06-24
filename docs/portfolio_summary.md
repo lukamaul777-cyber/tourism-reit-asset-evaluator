@@ -5,7 +5,7 @@
 - GitHub Repository: https://github.com/lukamaul777-cyber/tourism-reit-asset-evaluator
 
 ## One-Sentence Value Proposition
-A Streamlit-based decision-support dashboard for evaluating tourism-related consumption infrastructure assets through REITs suitability scoring, risk warning, scenario stress testing, and automated report generation.
+A Streamlit-based decision-support dashboard for evaluating tourism-related consumption infrastructure assets through data confidence checks, REITs suitability scoring, risk warning, scenario stress testing, and automated report generation.
 
 ## Problem Solved
 Tourism assets such as scenic areas, resort complexes, and hotels may have strong visibility but may not necessarily have stable cash flow, clear REITs suitability, or controllable risk exposure. This project provides a transparent analytical prototype to support asset screening and risk communication.
@@ -23,6 +23,7 @@ Tourism assets such as scenic areas, resort complexes, and hotels may have stron
 - Tourism Operation and Service Quality Analysis
 - Risk Warning Dashboard
 - Model Reliability, Validity, and Robustness Checks
+- Data Quality / Data Confidence Assessment
 - Scenario Simulator
 - Automatic Report Generator
 - Data and Configuration Validation
@@ -37,11 +38,13 @@ The project uses a two-layer structure:
 
 The scoring framework integrates REITs cash flow and distribution capacity, tourism operating quality, service quality and online reputation, risk management and resilience, and data maturity / smart operation capability.
 
+The data confidence layer evaluates input completeness, source reliability, traceability, timeliness, and analytical coverage before users interpret scores or reports.
+
 ## Data Disclaimer
 The MVP uses demo data that may include simulated or mixed values. Simulated values are explicitly labeled through data_type and source_note fields. The project does not present demo values as official disclosed data.
 
 ## Portfolio Value
-This project demonstrates the ability to translate a tourism-finance problem into a working data product, combine domain frameworks with dashboard design, implement transparent scoring logic, run model validation checks, conduct scenario stress testing, and generate structured decision-support reports.
+This project demonstrates the ability to translate a tourism-finance problem into a working data product, combine domain frameworks with dashboard design, implement transparent scoring logic, surface data quality limitations, run model validation checks, conduct scenario stress testing, and generate structured decision-support reports.
 
 ## Disclaimer
 This project is for portfolio demonstration and asset management support only. It is not investment advice, not a credit rating, not a valuation opinion, and not an official regulatory conclusion.

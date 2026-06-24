@@ -54,6 +54,7 @@ PAGE_KEYS = {
     "Model Validity": "page_names.model_validity",
     "Scenario Simulator": "page_names.scenario_simulator",
     "Report Generator": "page_names.report_generator",
+    "Data Quality": "page_names.data_quality",
 }
 
 

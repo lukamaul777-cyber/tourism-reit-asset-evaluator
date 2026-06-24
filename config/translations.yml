@@ -11,6 +11,7 @@ en:
     model_validity: Model Validity
     scenario_simulator: Scenario Simulator
     report_generator: Report Generator
+    data_quality: Data Quality
   common:
     language: "Language / \u8BED\u8A00"
     english: English
@@ -178,6 +179,22 @@ en:
     financial_pressure_risk: Financial Pressure Risk
     platform_dependency_risk: Platform Dependency Risk
     risk_disclosure_score: Risk Disclosure Score
+    data_confidence_score: Data Confidence Score
+    data_confidence_level: Data Confidence Level
+    completeness_score: Completeness Score
+    source_reliability_score: Source Reliability Score
+    traceability_score: Traceability Score
+    timeliness_score: Timeliness Score
+    coverage_score: Coverage Score
+    count: Count
+    percentage: Percentage
+    column: Column
+    missing_count: Missing Count
+    missing_percentage: Missing Percentage
+    row_count: Row Count
+    table_name: Table Name
+    column_name: Column Name
+    missing_pct: Missing Percentage
   risk_labels:
     seasonality_risk: Seasonality Risk
     market_competition_risk: Market Competition Risk
@@ -385,6 +402,72 @@ en:
   readme:
     language_note: The Streamlit app supports English and Simplified Chinese UI switching from the sidebar.
     translation_validation: 'Run translation validation:'
+  data_quality:
+    title: Data Quality
+    subtitle: Data Confidence Assessment
+    intro: This page evaluates the quality and transparency of input data, not the investment quality of the asset.
+    disclaimer: This module evaluates data completeness, source reliability, traceability, timeliness, and coverage. It does not certify data accuracy and does not convert simulated data into official disclosed data.
+    overview: Data Confidence Overview
+    breakdown: Data Quality Dimension Breakdown
+    dimension_explanations: Dimension explanations
+    confidence_ranking: Data Confidence Ranking
+    data_type_distribution: Data Type Distribution
+    missingness_summary: Missingness Summary
+    report: Data Quality Report
+    download_report: Download Data Quality Report
+    improvement_suggestions: Improvement Suggestions
+    improvement_suggestions_text: '- Replace simulated financial and operating values with verified annual report or prospectus data where available.
+
+      - Add source URLs, report names, page references, or collection dates to strengthen traceability.
+
+      - Document OTA or public web collection methods before treating reputation data as collected evidence.
+
+      - Expand the peer sample to improve sample-relative interpretation.'
+    table_filter: Missingness table filter
+    load_error: 'Unable to load data quality inputs: {error}'
+    calculation_error: 'Unable to calculate data confidence score: {error}'
+    data_confidence_score: Data Confidence Score
+    data_confidence_level: Data Confidence Level
+    completeness: Completeness
+    source_reliability: Source Reliability
+    traceability: Traceability
+    timeliness: Timeliness
+    coverage: Coverage
+    count: Count
+    missing_count: Missing Count
+    levels:
+      high_data_confidence: High Data Confidence
+      moderate_high_data_confidence: Moderate-High Data Confidence
+      moderate_data_confidence: Moderate Data Confidence
+      low_data_confidence: Low Data Confidence
+      very_low_data_confidence: Very Low Data Confidence
+    warning_source_reliability: Source reliability is limited by mixed or simulated data_type values.
+    warning_traceability: Source notes should be strengthened with more specific source references.
+    warning_completeness: Completeness can be improved by filling missing analytical fields.
+    explanations:
+      completeness: Completeness reflects the proportion of available non-metadata values.
+      source_reliability: Source reliability is an internal portfolio heuristic based on data_type values, not an official data-quality standard.
+      traceability: Traceability reflects whether source notes are available and meaningful.
+      timeliness: Timeliness is assessed relative to the latest year available in the demo dataset, not the current calendar year.
+      coverage: Coverage reflects whether the asset has usable data across the six analytical modules.
+    tables:
+      assets: Assets
+      financial_metrics: Financial Metrics
+      operation_metrics: Operation Metrics
+      service_quality_metrics: Service Quality Metrics
+      risk_metrics: Risk Metrics
+      digital_maturity_metrics: Digital Maturity Metrics
+      data_dictionary: Data Dictionary
+      overall: Overall
+    data_types:
+      actual: Actual
+      public_disclosure: Public Disclosure
+      public_collected: Public Collected
+      survey: Survey
+      manual_assessment: Manual Assessment
+      mixed: Mixed
+      simulated: Simulated
+      unknown: Unknown
 zh:
   app:
     title: "\u6587\u65C5 REITs \u8D44\u4EA7\u8BC4\u4F30\u5668"
@@ -398,6 +481,7 @@ zh:
     model_validity: "\u6A21\u578B\u6709\u6548\u6027"
     scenario_simulator: "\u60C5\u666F\u6A21\u62DF\u5668"
     report_generator: "\u62A5\u544A\u751F\u6210\u5668"
+    data_quality: "\u6570\u636E\u8D28\u91CF"
   common:
     language: "Language / \u8BED\u8A00"
     english: English
@@ -565,6 +649,22 @@ zh:
     financial_pressure_risk: "\u8D22\u52A1\u538B\u529B\u98CE\u9669"
     platform_dependency_risk: "\u5E73\u53F0\u4F9D\u8D56\u98CE\u9669"
     risk_disclosure_score: "\u98CE\u9669\u62AB\u9732\u5F97\u5206"
+    data_confidence_score: "\u6570\u636E\u53EF\u4FE1\u5EA6\u8BC4\u5206"
+    data_confidence_level: "\u6570\u636E\u53EF\u4FE1\u5EA6\u7B49\u7EA7"
+    completeness_score: "\u5B8C\u6574\u6027\u8BC4\u5206"
+    source_reliability_score: "\u6765\u6E90\u53EF\u9760\u6027\u8BC4\u5206"
+    traceability_score: "\u53EF\u8FFD\u6EAF\u6027\u8BC4\u5206"
+    timeliness_score: "\u65F6\u6548\u6027\u8BC4\u5206"
+    coverage_score: "\u8986\u76D6\u5EA6\u8BC4\u5206"
+    count: "\u6570\u91CF"
+    percentage: "\u5360\u6BD4"
+    column: "\u5B57\u6BB5"
+    missing_count: "\u7F3A\u5931\u6570\u91CF"
+    missing_percentage: "\u7F3A\u5931\u6BD4\u4F8B"
+    row_count: "\u884C\u6570"
+    table_name: "\u6570\u636E\u8868"
+    column_name: "\u5B57\u6BB5\u540D\u79F0"
+    missing_pct: "\u7F3A\u5931\u6BD4\u4F8B"
   risk_labels:
     seasonality_risk: "\u5B63\u8282\u6027\u98CE\u9669"
     market_competition_risk: "\u5E02\u573A\u7ADE\u4E89\u98CE\u9669"
@@ -756,3 +856,63 @@ zh:
   readme:
     language_note: "Streamlit \u5E94\u7528\u652F\u6301\u5728\u4FA7\u8FB9\u680F\u5207\u6362\u82F1\u6587\u548C\u7B80\u4F53\u4E2D\u6587\u754C\u9762\u3002"
     translation_validation: "\u8FD0\u884C\u7FFB\u8BD1\u6821\u9A8C\uFF1A"
+  data_quality:
+    title: "\u6570\u636E\u8D28\u91CF"
+    subtitle: "\u6570\u636E\u8D28\u91CF\u4E0E\u6570\u636E\u53EF\u4FE1\u5EA6\u8BC4\u4F30"
+    intro: "\u672C\u9875\u8BC4\u4F30\u8F93\u5165\u6570\u636E\u7684\u8D28\u91CF\u4E0E\u900F\u660E\u5EA6\uFF0C\u4E0D\u8BC4\u4F30\u8D44\u4EA7\u6295\u8D44\u8D28\u91CF\u3002"
+    disclaimer: "\u672C\u6A21\u5757\u8BC4\u4F30\u6570\u636E\u5B8C\u6574\u6027\u3001\u6765\u6E90\u53EF\u9760\u6027\u3001\u53EF\u8FFD\u6EAF\u6027\u3001\u65F6\u6548\u6027\u4E0E\u8986\u76D6\u5EA6\uFF0C\u4F46\u4E0D\u8BA4\u8BC1\u6570\u636E\u771F\u5B9E\u6027\uFF0C\u4E5F\u4E0D\u4F1A\u5C06\u6A21\u62DF\u6570\u636E\u8F6C\u5316\u4E3A\u5B98\u65B9\u62AB\u9732\u6570\u636E\u3002"
+    overview: "\u6570\u636E\u53EF\u4FE1\u5EA6\u6982\u89C8"
+    breakdown: "\u6570\u636E\u8D28\u91CF\u7EF4\u5EA6\u62C6\u89E3"
+    dimension_explanations: "\u7EF4\u5EA6\u8BF4\u660E"
+    confidence_ranking: "\u6570\u636E\u53EF\u4FE1\u5EA6\u6392\u540D"
+    data_type_distribution: "\u6570\u636E\u7C7B\u578B\u5206\u5E03"
+    missingness_summary: "\u7F3A\u5931\u60C5\u51B5\u6C47\u603B"
+    report: "\u6570\u636E\u8D28\u91CF\u62A5\u544A"
+    download_report: "\u4E0B\u8F7D\u6570\u636E\u8D28\u91CF\u62A5\u544A"
+    improvement_suggestions: "\u6539\u8FDB\u5EFA\u8BAE"
+    improvement_suggestions_text: "- \u5C3D\u53EF\u80FD\u7528\u7ECF\u6838\u9A8C\u7684\u5E74\u62A5\u3001\u62DB\u52DF\u8BF4\u660E\u4E66\u6216\u516C\u5F00\u62AB\u9732\u6570\u636E\u66FF\u6362\u6A21\u62DF\u8D22\u52A1\u4E0E\u8FD0\u8425\u503C\u3002\n- \u589E\u52A0\u6765\u6E90\u94FE\u63A5\u3001\u62A5\u544A\u540D\u79F0\u3001\u9875\u7801\u6216\u91C7\u96C6\u65E5\u671F\uFF0C\u4EE5\u63D0\u5347\u53EF\u8FFD\u6EAF\u6027\u3002\n- \u5728\u5C06 OTA \u6216\u516C\u5F00\u7F51\u9875\u6570\u636E\u4F5C\u4E3A\u91C7\u96C6\u8BC1\u636E\u524D\uFF0C\u5E94\u8BB0\u5F55\u91C7\u96C6\u65B9\u6CD5\u3002\n- \u6269\u5927\u53EF\u6BD4\u8D44\u4EA7\u6837\u672C\uFF0C\u4EE5\u63D0\u5347\u6837\u672C\u76F8\u5BF9\u89E3\u8BFB\u7684\u7A33\u5065\u6027\u3002"
+    table_filter: "\u7F3A\u5931\u60C5\u51B5\u8868\u7B5B\u9009"
+    load_error: "\u65E0\u6CD5\u52A0\u8F7D\u6570\u636E\u8D28\u91CF\u8F93\u5165\uFF1A{error}"
+    calculation_error: "\u65E0\u6CD5\u8BA1\u7B97\u6570\u636E\u53EF\u4FE1\u5EA6\u8BC4\u5206\uFF1A{error}"
+    data_confidence_score: "\u6570\u636E\u53EF\u4FE1\u5EA6\u8BC4\u5206"
+    data_confidence_level: "\u6570\u636E\u53EF\u4FE1\u5EA6\u7B49\u7EA7"
+    completeness: "\u5B8C\u6574\u6027"
+    source_reliability: "\u6765\u6E90\u53EF\u9760\u6027"
+    traceability: "\u53EF\u8FFD\u6EAF\u6027"
+    timeliness: "\u65F6\u6548\u6027"
+    coverage: "\u8986\u76D6\u5EA6"
+    count: "\u6570\u91CF"
+    missing_count: "\u7F3A\u5931\u6570\u91CF"
+    levels:
+      high_data_confidence: "\u9AD8\u6570\u636E\u53EF\u4FE1\u5EA6"
+      moderate_high_data_confidence: "\u8F83\u9AD8\u6570\u636E\u53EF\u4FE1\u5EA6"
+      moderate_data_confidence: "\u4E2D\u7B49\u6570\u636E\u53EF\u4FE1\u5EA6"
+      low_data_confidence: "\u8F83\u4F4E\u6570\u636E\u53EF\u4FE1\u5EA6"
+      very_low_data_confidence: "\u5F88\u4F4E\u6570\u636E\u53EF\u4FE1\u5EA6"
+    warning_source_reliability: "\u6765\u6E90\u53EF\u9760\u6027\u53D7 mixed \u6216 simulated \u6570\u636E\u7C7B\u578B\u5F71\u54CD\u3002"
+    warning_traceability: "source_note \u5E94\u8865\u5145\u66F4\u5177\u4F53\u7684\u6765\u6E90\u8BF4\u660E\u3002"
+    warning_completeness: "\u53EF\u901A\u8FC7\u8865\u5168\u7F3A\u5931\u5206\u6790\u5B57\u6BB5\u63D0\u5347\u5B8C\u6574\u6027\u3002"
+    explanations:
+      completeness: "\u5B8C\u6574\u6027\u53CD\u6620\u975E\u5143\u6570\u636E\u5B57\u6BB5\u4E2D\u53EF\u7528\u6570\u636E\u7684\u6BD4\u4F8B\u3002"
+      source_reliability: "\u6765\u6E90\u53EF\u9760\u6027\u662F\u57FA\u4E8E data_type \u7684\u5185\u90E8\u4F5C\u54C1\u96C6\u542F\u53D1\u5F0F\u89C4\u5219\uFF0C\u5E76\u975E\u5B98\u65B9\u6570\u636E\u8D28\u91CF\u6807\u51C6\u3002"
+      traceability: "\u53EF\u8FFD\u6EAF\u6027\u53CD\u6620 source_note \u662F\u5426\u5B58\u5728\u4E14\u5177\u6709\u89E3\u91CA\u610F\u4E49\u3002"
+      timeliness: "\u65F6\u6548\u6027\u57FA\u4E8E\u793A\u4F8B\u6570\u636E\u96C6\u4E2D\u53EF\u7528\u7684\u6700\u65B0\u5E74\u4EFD\u8FDB\u884C\u76F8\u5BF9\u8BC4\u4F30\uFF0C\u800C\u4E0D\u662F\u6309\u5F53\u524D\u81EA\u7136\u5E74\u4EFD\u786C\u6027\u5224\u65AD\u3002"
+      coverage: "\u8986\u76D6\u5EA6\u53CD\u6620\u8D44\u4EA7\u662F\u5426\u5728\u516D\u4E2A\u5206\u6790\u6A21\u5757\u4E2D\u5177\u6709\u53EF\u7528\u6570\u636E\u3002"
+    tables:
+      assets: "\u8D44\u4EA7\u57FA\u7840\u8868"
+      financial_metrics: "\u8D22\u52A1\u6307\u6807\u8868"
+      operation_metrics: "\u8FD0\u8425\u6307\u6807\u8868"
+      service_quality_metrics: "\u670D\u52A1\u8D28\u91CF\u6307\u6807\u8868"
+      risk_metrics: "\u98CE\u9669\u6307\u6807\u8868"
+      digital_maturity_metrics: "\u6570\u5B57\u6210\u719F\u5EA6\u6307\u6807\u8868"
+      data_dictionary: "\u6570\u636E\u5B57\u5178"
+      overall: "\u603B\u4F53"
+    data_types:
+      actual: "\u5B9E\u9645\u6570\u636E"
+      public_disclosure: "\u516C\u5F00\u62AB\u9732"
+      public_collected: "\u516C\u5F00\u91C7\u96C6"
+      survey: "\u95EE\u5377\u8C03\u67E5"
+      manual_assessment: "\u4EBA\u5DE5\u8BC4\u4F30"
+      mixed: "\u6DF7\u5408\u6570\u636E"
+      simulated: "\u6A21\u62DF\u6570\u636E"
+      unknown: "\u672A\u77E5"

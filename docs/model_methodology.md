@@ -62,6 +62,22 @@ Demo data may include simulated values. Simulated values must be clearly labeled
 
 The model should distinguish among public disclosure data, publicly collected data, survey data, simulated data, and manual assessment data. Indicator-level source requirements are maintained in `config/indicator_framework.yml`.
 
+## Data Quality / Data Confidence Layer
+
+The Data Quality / Data Confidence layer evaluates whether the input dataset is transparent enough to support interpretation. It is separate from the Regulatory Gatekeeper and the 100-point REITs suitability score.
+
+The prototype data confidence score uses five dimensions:
+
+- Completeness: whether non-metadata analytical fields are populated.
+- Source reliability: a heuristic score based on `data_type` labels such as public disclosure, public collected, mixed, or simulated.
+- Traceability: whether `source_note` fields are present and specific enough to support follow-up review.
+- Timeliness: whether the asset has recent year data relative to the demo dataset.
+- Coverage: whether the asset is represented across core analytical tables, including profile, financial, operation, service quality, risk, and digital maturity data.
+
+This layer does not certify that data is accurate, official, audited, or investment-ready. It does not convert simulated or mixed values into official disclosed values. Instead, it makes data limitations visible before users interpret scores, risk warnings, scenario outputs, or generated reports.
+
+In the MVP, source reliability and traceability are internal portfolio heuristics. They should be replaced or supplemented with documented source verification rules when the project uses verified annual reports, prospectuses, OTA collection logs, or other source-document evidence.
+
 ## Reliability and Validity
 
 Model reliability and validity should be tested through:

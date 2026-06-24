@@ -9,6 +9,8 @@ The indicator system uses a two-layer structure:
 
 Each indicator in `config/indicator_framework.yml` includes an ID, name, module, definition, formula, scoring direction, source type, reference framework, validation method, reliability method, and required-status flag.
 
+The Data Quality / Data Confidence module is a supporting transparency layer around the data inputs. It evaluates completeness, source reliability, traceability, timeliness, and coverage, but it does not add new REITs suitability indicators or change the 100-point scoring formulas.
+
 ## Layer 1: Regulatory Gatekeeper
 
 The gatekeeper checks whether the asset has:

@@ -27,6 +27,7 @@ Public infrastructure REITs underlying assets require stable operating cash flow
 - **Tourism Operation and Service Quality Analysis**: visitor, occupancy, RevPAR, OTA score, survey-scale, and complaint indicators.
 - **Risk Warning Dashboard**: sample-relative risk metrics and warning interpretation.
 - **Model Reliability / Validity / Robustness Checks**: content validity, Cronbach's Alpha, AHP status, and weight sensitivity analysis.
+- **Data Quality / Data Confidence Assessment**: completeness, source reliability, traceability, timeliness, and coverage checks for demo inputs.
 - **Scenario Simulator**: stress-test style revenue, demand, cost, CAPEX, and reputation shocks.
 - **Automatic Report Generator**: deterministic Markdown asset reports.
 - **English / Simplified Chinese UI Switching**: sidebar language selector backed by `config/translations.yml`.
@@ -35,7 +36,7 @@ Public infrastructure REITs underlying assets require stable operating cash flow
 ## Product Workflow
 
 ```text
-Data Input -> Regulatory Gatekeeper -> Scoring Model -> Risk Warning -> Model Validity -> Scenario Simulation -> Report Generation
+Data Input -> Data Quality -> Regulatory Gatekeeper -> Scoring Model -> Risk Warning -> Model Validity -> Scenario Simulation -> Report Generation
 ```
 
 ## Methodology
@@ -45,6 +46,8 @@ The model uses a two-layer structure. The first layer is the **Regulatory Gateke
 The second layer is the **100-point REITs Suitability Score**, which compares assets across five modules: cash flow and distribution capacity, tourism operating quality, service quality and online reputation, risk management and resilience, and data maturity and smart operation.
 
 The scoring model uses peer min-max normalization. Positive indicators reward higher values relative to the sample, while negative indicators reward lower values. Missing indicator values return missing scores and are excluded from module averages instead of being replaced with fabricated values.
+
+The data quality layer evaluates input transparency before interpretation. It scores completeness, source reliability, traceability, timeliness, and analytical coverage. This is a data-confidence diagnostic only; it does not certify data accuracy or replace source-document due diligence.
 
 Supported weighting modes include `default_expert_weight`, `equal_weight`, and an `entropy_weight_placeholder` reserved for future use with a larger verified dataset. Reliability and validity checks include content validity review, Cronbach's Alpha for service-quality multi-item data only, AHP consistency when a pairwise matrix is provided, and ranking stability under weight perturbation.
 
@@ -82,6 +85,7 @@ Demo data should not be interpreted as official disclosed data. Model outputs ar
 - **Model Validity**: content validity, reliability, AHP status, sensitivity analysis, and limitations.
 - **Scenario Simulator**: interactive stress-test estimates for score, cash flow, AFFO proxy, and distribution coverage.
 - **Report Generator**: deterministic Markdown report generation with optional scenario inclusion and downloads.
+- **Data Quality**: data confidence score, source-type distribution, missingness summary, and improvement suggestions.
 
 ## Project Structure
 
@@ -116,7 +120,8 @@ tourism-reit-asset-evaluator/
 |   |-- 4_Risk_Warning.py
 |   |-- 5_Model_Validity.py
 |   |-- 6_Scenario_Simulator.py
-|   `-- 7_Report_Generator.py
+|   |-- 7_Report_Generator.py
+|   `-- 8_Data_Quality.py
 |-- reports/
 |   |-- report_A001.md
 |   |-- report_A002.md
@@ -126,9 +131,11 @@ tourism-reit-asset-evaluator/
 |   |-- run_model_validity_checks.py
 |   |-- validate_data_files.py
 |   |-- validate_project_config.py
-|   `-- validate_translations.py
+|   |-- validate_translations.py
+|   `-- validate_data_quality.py
 |-- src/
 |   |-- chart_utils.py
+|   |-- data_quality.py
 |   |-- data_loader.py
 |   |-- gatekeeper.py
 |   |-- i18n.py
@@ -155,11 +162,13 @@ Run validation and backend checks:
 python scripts/validate_project_config.py
 python scripts/validate_translations.py
 python scripts/validate_data_files.py
+python scripts/validate_data_quality.py
 python src/gatekeeper.py
 python src/scoring_model.py
 python scripts/run_model_validity_checks.py
 python src/scenario_simulator.py
 python src/report_generator.py
+python src/data_quality.py
 ```
 
 Launch the Streamlit app:
@@ -217,6 +226,7 @@ Rule-based generated report preview with Markdown/TXT download options.
 
 - The demo dataset size is small.
 - Some indicators are simulated or mixed.
+- Data confidence scores evaluate input transparency and do not certify official accuracy.
 - Peer normalization depends on the available sample.
 - The scenario simulator uses simplified stress-test assumptions.
 - Model validity is limited by demo data and small sample size.
