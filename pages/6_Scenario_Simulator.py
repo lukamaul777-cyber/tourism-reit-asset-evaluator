@@ -12,6 +12,7 @@ from src.chart_utils import (
     make_score_change_chart,
 )
 from src.data_loader import get_asset_options
+from src.i18n import language_selector, t
 from src.scenario_simulator import run_demo_scenarios, simulate_asset_scenario
 
 
@@ -58,15 +59,23 @@ PRESETS = {
 }
 
 
+PRESET_LABEL_KEYS = {
+    "Custom Scenario": "scenario.custom",
+    "Mild Downside": "scenario.mild_downside",
+    "Demand Shock": "scenario.demand_shock",
+    "Stress Case": "scenario.stress_case",
+}
+
+
 def fmt_number(value: float | None, digits: int = 2) -> str:
     if value is None or pd.isna(value):
-        return "Data unavailable"
+        return t("common.data_unavailable")
     return f"{value:,.{digits}f}"
 
 
 def fmt_score(value: float | None) -> str:
     if value is None or pd.isna(value):
-        return "Data unavailable"
+        return t("common.data_unavailable")
     return f"{value:.1f}"
 
 
@@ -124,66 +133,71 @@ def make_demo_scenario_chart(demo_df: pd.DataFrame):
         color="scenario_name",
         barmode="group",
         text="simulated_score",
-        title="Demo Scenario Simulated Scores",
+        title=t("scenario.demo_chart_title"),
         range_y=[0, 100],
         color_discrete_sequence=px.colors.qualitative.Safe,
     )
     fig.update_traces(texttemplate="%{text:.1f}", textposition="outside")
     fig.update_layout(
         xaxis_title="",
-        yaxis_title="Simulated REITs Suitability Score",
+        yaxis_title=t("scenario.simulated_score_axis"),
         template="plotly_white",
         height=430,
-        legend_title_text="Scenario",
+        legend_title_text=t("scenario.scenario_legend"),
     )
     return fig
 
 
 def main() -> None:
-    st.title("Scenario Simulator")
-    st.caption("文旅资产情景模拟与压力测试")
-    st.info(
-        "This page estimates how selected operational and financial shocks may affect cash flow, "
-        "AFFO proxy, distribution coverage, and REITs suitability score. It is a simplified "
-        "stress-test module, not a forecast, valuation opinion, investment recommendation, or regulatory conclusion."
-    )
+    language_selector()
+    st.title(t("scenario.title"))
+    st.caption(t("scenario.subtitle"))
+    st.info(t("scenario.notice"))
 
     try:
         asset_options = get_asset_options()
     except Exception as exc:
-        st.error(f"Unable to load asset options: {exc}")
-        if st.checkbox("Debug mode"):
+        st.error(t("common.unable_to_load_asset_options", error=exc))
+        if st.checkbox(t("common.debug_mode")):
             st.exception(exc)
         return
 
     control_col, output_col = st.columns([0.36, 0.64])
 
     with control_col:
-        st.subheader("Scenario Controls")
-        selected_label = st.selectbox("Asset", list(asset_options.keys()))
+        st.subheader(t("scenario.controls"))
+        selected_label = st.selectbox(t("common.select_asset"), list(asset_options.keys()))
         asset_id = asset_options[selected_label]
-        preset = st.selectbox("Scenario preset", list(PRESETS.keys()))
-        if st.button("Apply preset", use_container_width=True):
+        preset = st.selectbox(
+            t("scenario.preset"),
+            list(PRESETS.keys()),
+            format_func=lambda value: t(PRESET_LABEL_KEYS.get(value, value), value),
+        )
+        if st.button(t("common.apply_preset"), use_container_width=True):
             apply_preset(preset)
 
         if preset != "Custom Scenario":
-            st.caption("Use Apply preset to populate the sliders with the selected stress-test case.")
+            st.caption(t("scenario.preset_caption"))
 
-        revenue_decline_pct = percent_slider("Revenue decline", "revenue_decline_pct", 50)
-        visitor_volume_decline_pct = percent_slider("Visitor volume decline", "visitor_volume_decline_pct", 50)
-        occupancy_decline_pct = percent_slider("Occupancy decline", "occupancy_decline_pct", 30)
-        adr_decline_pct = percent_slider("ADR decline", "adr_decline_pct", 30)
+        revenue_decline_pct = percent_slider(t("scenario.revenue_decline"), "revenue_decline_pct", 50)
+        visitor_volume_decline_pct = percent_slider(
+            t("scenario.visitor_volume_decline"),
+            "visitor_volume_decline_pct",
+            50,
+        )
+        occupancy_decline_pct = percent_slider(t("scenario.occupancy_decline"), "occupancy_decline_pct", 30)
+        adr_decline_pct = percent_slider(t("scenario.adr_decline"), "adr_decline_pct", 30)
         operating_cost_increase_pct = percent_slider(
-            "Operating cost increase",
+            t("scenario.operating_cost_increase"),
             "operating_cost_increase_pct",
             50,
         )
         maintenance_capex_increase_pct = percent_slider(
-            "Maintenance CAPEX increase",
+            t("scenario.maintenance_capex_increase"),
             "maintenance_capex_increase_pct",
             50,
         )
-        ota_score_decline = score_decline_slider("OTA score decline", "ota_score_decline")
+        ota_score_decline = score_decline_slider(t("scenario.ota_score_decline"), "ota_score_decline")
 
     try:
         result = simulate_asset_scenario(
@@ -197,71 +211,71 @@ def main() -> None:
             ota_score_decline=ota_score_decline,
         )
     except Exception as exc:
-        st.error(f"Scenario simulation failed: {exc}")
-        if st.checkbox("Debug simulation"):
+        st.error(t("scenario.failed", error=exc))
+        if st.checkbox(t("common.debug_simulation")):
             st.exception(exc)
         return
 
     with output_col:
-        st.subheader("Simulation Output")
+        st.subheader(t("scenario.output"))
         kpi_cols = st.columns(4)
-        kpi_cols[0].metric("Base REITs Suitability Score", fmt_score(result["base_score"]))
-        kpi_cols[1].metric("Simulated REITs Suitability Score", fmt_score(result["simulated_score"]))
-        kpi_cols[2].metric("Score Change", fmt_score(result["score_change"]))
-        kpi_cols[3].metric("Scenario Severity", result["severity"])
+        kpi_cols[0].metric(t("scenario.base_score"), fmt_score(result["base_score"]))
+        kpi_cols[1].metric(t("scenario.simulated_score"), fmt_score(result["simulated_score"]))
+        kpi_cols[2].metric(t("scenario.score_change"), fmt_score(result["score_change"]))
+        kpi_cols[3].metric(t("scenario.severity"), result["severity"])
 
         kpi_cols_2 = st.columns(4)
         kpi_cols_2[0].metric(
-            "Base Distribution Coverage",
+            t("scenario.base_distribution_coverage"),
             fmt_number(result["base_metrics"]["distribution_coverage"]),
         )
         kpi_cols_2[1].metric(
-            "Simulated Distribution Coverage",
+            t("scenario.simulated_distribution_coverage"),
             fmt_number(result["simulated_metrics"]["distribution_coverage_after"]),
         )
-        kpi_cols_2[2].metric("AFFO Change", fmt_number(result["impact_metrics"]["affo_change"]))
-        kpi_cols_2[3].metric("NOI Change", fmt_number(result["impact_metrics"]["noi_change"]))
+        kpi_cols_2[2].metric(t("scenario.affo_change"), fmt_number(result["impact_metrics"]["affo_change"]))
+        kpi_cols_2[3].metric(t("scenario.noi_change"), fmt_number(result["impact_metrics"]["noi_change"]))
 
         if result["warnings"]:
             st.warning(" ".join(result["warnings"]))
 
     chart_col_1, chart_col_2 = st.columns(2)
     with chart_col_1:
-        st.subheader("Score Impact")
+        st.subheader(t("scenario.score_impact"))
         if result["base_score"] is None or result["simulated_score"] is None:
-            st.info("Score comparison is unavailable because score data is missing.")
+            st.info(t("scenario.score_comparison_unavailable"))
         else:
             st.plotly_chart(
                 make_base_vs_simulated_bar(
                     result["base_score"],
                     result["simulated_score"],
-                    "Base vs Simulated REITs Suitability Score",
-                    "Score",
+                    t("scenario.score_impact"),
+                    t("labels.total_score"),
                 ),
                 use_container_width=True,
             )
 
     with chart_col_2:
-        st.subheader("Distribution Coverage Impact")
+        st.subheader(t("scenario.distribution_impact"))
         if (
             result["base_metrics"]["distribution_coverage"] is None
             or result["simulated_metrics"]["distribution_coverage_after"] is None
         ):
-            st.info("Distribution coverage cannot be calculated because estimated distribution is unavailable or zero.")
+            st.info(t("scenario.distribution_unavailable"))
         else:
             st.plotly_chart(
                 make_base_vs_simulated_bar(
                     result["base_metrics"]["distribution_coverage"],
                     result["simulated_metrics"]["distribution_coverage_after"],
-                    "Base vs Simulated Distribution Coverage",
-                    "Coverage Ratio",
+                    t("scenario.distribution_impact"),
+                    t("scenario.simulated_distribution_coverage"),
                 ),
                 use_container_width=True,
             )
 
     cash_col, waterfall_col = st.columns(2)
     with cash_col:
-        st.subheader("Cash Flow Impact")
+        st.subheader(t("scenario.cash_flow_impact"))
         cash_values = [
             result["base_metrics"].get("noi"),
             result["simulated_metrics"].get("noi_after"),
@@ -271,7 +285,7 @@ def main() -> None:
             result["simulated_metrics"].get("affo_after"),
         ]
         if pd.Series(cash_values).dropna().empty:
-            st.info("Cash flow impact chart is unavailable because cash flow metrics are missing.")
+            st.info(t("scenario.cash_flow_unavailable"))
         else:
             st.plotly_chart(
                 make_cash_flow_impact_chart(result["base_metrics"], result["simulated_metrics"]),
@@ -279,29 +293,49 @@ def main() -> None:
             )
 
     with waterfall_col:
-        st.subheader("Score Change Waterfall")
+        st.subheader(t("scenario.waterfall"))
         if result["score_change"] is None:
-            st.info("Score change waterfall is unavailable because score impact is missing.")
+            st.info(t("scenario.waterfall_unavailable"))
         else:
             st.plotly_chart(
                 make_score_change_chart(result["base_score"], result["score_change"], result["simulated_score"]),
                 use_container_width=True,
             )
 
-    st.subheader("Automatic Scenario Explanation")
+    st.subheader(t("scenario.explanation"))
     st.info(result["explanation"])
 
-    table_tab_1, table_tab_2, table_tab_3 = st.tabs(["Base Metrics", "Simulated Metrics", "Impact Metrics"])
+    table_tab_1, table_tab_2, table_tab_3 = st.tabs(
+        [t("scenario.base_metrics"), t("scenario.simulated_metrics"), t("scenario.impact_metrics")]
+    )
     with table_tab_1:
-        st.dataframe(result_to_table(result["base_metrics"]).style.format({"value": "{:,.3f}"}, na_rep="Data unavailable"), use_container_width=True)
+        st.dataframe(
+            result_to_table(result["base_metrics"]).style.format(
+                {"value": "{:,.3f}"},
+                na_rep=t("common.data_unavailable"),
+            ),
+            use_container_width=True,
+        )
     with table_tab_2:
-        st.dataframe(result_to_table(result["simulated_metrics"]).style.format({"value": "{:,.3f}"}, na_rep="Data unavailable"), use_container_width=True)
+        st.dataframe(
+            result_to_table(result["simulated_metrics"]).style.format(
+                {"value": "{:,.3f}"},
+                na_rep=t("common.data_unavailable"),
+            ),
+            use_container_width=True,
+        )
     with table_tab_3:
-        st.dataframe(result_to_table(result["impact_metrics"]).style.format({"value": "{:,.3f}"}, na_rep="Data unavailable"), use_container_width=True)
+        st.dataframe(
+            result_to_table(result["impact_metrics"]).style.format(
+                {"value": "{:,.3f}"},
+                na_rep=t("common.data_unavailable"),
+            ),
+            use_container_width=True,
+        )
 
     st.divider()
-    st.subheader("Demo Scenario Comparison")
-    st.caption("Demo scenarios are predefined stress-test cases for comparison and are not forecasts.")
+    st.subheader(t("scenario.demo_comparison"))
+    st.caption(t("scenario.demo_caption"))
     try:
         demo_df = run_demo_scenarios()
         st.dataframe(
@@ -313,19 +347,19 @@ def main() -> None:
                     "base_distribution_coverage": "{:.2f}",
                     "simulated_distribution_coverage": "{:.2f}",
                 },
-                na_rep="Data unavailable",
+                na_rep=t("common.data_unavailable"),
             ),
             use_container_width=True,
             hide_index=True,
         )
         demo_chart = make_demo_scenario_chart(demo_df)
         if demo_chart is None:
-            st.info("Demo scenario score chart is unavailable.")
+            st.info(t("scenario.demo_chart_unavailable"))
         else:
             st.plotly_chart(demo_chart, use_container_width=True)
     except Exception as exc:
-        st.error(f"Unable to run demo scenario comparison: {exc}")
-        if st.checkbox("Debug demo scenarios"):
+        st.error(t("scenario.demo_error", error=exc))
+        if st.checkbox(t("scenario.debug_demo")):
             st.exception(exc)
 
 

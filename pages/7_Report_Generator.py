@@ -8,6 +8,7 @@ from pathlib import Path
 import streamlit as st
 
 from src.data_loader import get_asset_options, get_project_root
+from src.i18n import language_selector, t, translate_rating, translate_status
 from src.report_generator import (
     generate_asset_report,
     save_report,
@@ -60,6 +61,14 @@ PRESETS = {
 }
 
 
+PRESET_LABEL_KEYS = {
+    "Custom Scenario": "scenario.custom",
+    "Mild Downside": "scenario.mild_downside",
+    "Demand Shock": "scenario.demand_shock",
+    "Stress Case": "scenario.stress_case",
+}
+
+
 def apply_preset(preset_name: str, prefix: str = "report") -> None:
     for key, value in PRESETS[preset_name].items():
         state_key = f"{prefix}_{key}"
@@ -96,33 +105,37 @@ def score_decline_slider(label: str, key: str) -> float:
 
 
 def scenario_controls() -> dict[str, float]:
-    preset = st.selectbox("Scenario preset", list(PRESETS.keys()))
-    if st.button("Apply preset", use_container_width=True):
+    preset = st.selectbox(
+        t("scenario.preset"),
+        list(PRESETS.keys()),
+        format_func=lambda value: t(PRESET_LABEL_KEYS.get(value, value), value),
+    )
+    if st.button(t("common.apply_preset"), use_container_width=True):
         apply_preset(preset)
     if preset != "Custom Scenario":
-        st.caption("Use Apply preset to populate the sliders with this predefined stress-test case.")
+        st.caption(t("report.preset_caption"))
 
     prefix = "report"
     return {
-        "revenue_decline_pct": percent_slider("Revenue decline", f"{prefix}_revenue_decline_pct", 50),
+        "revenue_decline_pct": percent_slider(t("scenario.revenue_decline"), f"{prefix}_revenue_decline_pct", 50),
         "visitor_volume_decline_pct": percent_slider(
-            "Visitor volume decline",
+            t("scenario.visitor_volume_decline"),
             f"{prefix}_visitor_volume_decline_pct",
             50,
         ),
-        "occupancy_decline_pct": percent_slider("Occupancy decline", f"{prefix}_occupancy_decline_pct", 30),
-        "adr_decline_pct": percent_slider("ADR decline", f"{prefix}_adr_decline_pct", 30),
+        "occupancy_decline_pct": percent_slider(t("scenario.occupancy_decline"), f"{prefix}_occupancy_decline_pct", 30),
+        "adr_decline_pct": percent_slider(t("scenario.adr_decline"), f"{prefix}_adr_decline_pct", 30),
         "operating_cost_increase_pct": percent_slider(
-            "Operating cost increase",
+            t("scenario.operating_cost_increase"),
             f"{prefix}_operating_cost_increase_pct",
             50,
         ),
         "maintenance_capex_increase_pct": percent_slider(
-            "Maintenance CAPEX increase",
+            t("scenario.maintenance_capex_increase"),
             f"{prefix}_maintenance_capex_increase_pct",
             50,
         ),
-        "ota_score_decline": score_decline_slider("OTA score decline", f"{prefix}_ota_score_decline"),
+        "ota_score_decline": score_decline_slider(t("scenario.ota_score_decline"), f"{prefix}_ota_score_decline"),
     }
 
 
@@ -136,15 +149,18 @@ def render_status_cards(asset_id: str, weight_mode: str, scenario_included: bool
         gatekeeper = summarize_gatekeeper(asset_id)
         score = summarize_score(asset_id, weight_mode=weight_mode)
     except Exception as exc:
-        st.warning(f"Report quality status unavailable: {exc}")
+        st.warning(t("report.quality_unavailable", error=exc))
         return
 
     cols = st.columns(5)
-    cols[0].metric("Gatekeeper status", gatekeeper["overall_status"])
-    cols[1].metric("Total score", "Data unavailable" if score["total_score"] is None else f"{score['total_score']:.1f}")
-    cols[2].metric("Rating level", score["rating_level"])
-    cols[3].metric("Scenario included", "Yes" if scenario_included else "No")
-    cols[4].metric("Data notice", "Demo / simulated values may be included")
+    cols[0].metric(t("labels.gatekeeper_status"), translate_status(gatekeeper["overall_status"]))
+    cols[1].metric(
+        t("labels.total_score"),
+        t("common.data_unavailable") if score["total_score"] is None else f"{score['total_score']:.1f}",
+    )
+    cols[2].metric(t("labels.rating_level"), translate_rating(score["rating_level"]))
+    cols[3].metric(t("labels.scenario_included"), t("common.yes") if scenario_included else t("common.no"))
+    cols[4].metric(t("labels.data_notice"), t("report.demo_values_may_be_included"))
 
 
 def save_timestamped_report(report_text: str, asset_id: str, scenario_included: bool) -> Path:
@@ -155,46 +171,46 @@ def save_timestamped_report(report_text: str, asset_id: str, scenario_included: 
 
 
 def main() -> None:
-    st.title("Report Generator")
-    st.caption("资产分析报告生成器")
-    st.info(
-        "This page generates a structured asset analysis report based on the Regulatory Gatekeeper, "
-        "REITs suitability scoring model, risk warning module, model validity notes, and optional scenario simulation results. "
-        "The report is rule-based, deterministic, and does not use external LLM APIs."
-    )
-    st.warning(
-        "Generated reports are for portfolio demonstration and asset management communication only. "
-        "They are not investment advice, credit ratings, valuation opinions, or official regulatory conclusions."
-    )
+    language_selector()
+    st.title(t("report.title"))
+    st.caption(t("report.subtitle"))
+    st.info(t("report.intro"))
+    st.warning(t("report.disclaimer"))
+    st.caption(t("report.language_note"))
 
     try:
         asset_options = get_asset_options()
     except Exception as exc:
-        st.error(f"Unable to load asset options: {exc}")
-        if st.checkbox("Debug mode"):
+        st.error(t("common.unable_to_load_asset_options", error=exc))
+        if st.checkbox(t("common.debug_mode")):
             st.exception(exc)
         return
 
     control_col, preview_col = st.columns([0.34, 0.66])
 
     with control_col:
-        st.subheader("Report Controls")
-        selected_label = st.selectbox("Asset", list(asset_options.keys()))
+        st.subheader(t("report.controls"))
+        selected_label = st.selectbox(t("common.select_asset"), list(asset_options.keys()))
         asset_id = asset_options[selected_label]
-        weight_mode = st.selectbox("Weighting mode", ["default_expert_weight", "equal_weight"], index=0)
-        include_scenario = st.checkbox("Include scenario simulation result in report")
+        weight_mode = st.selectbox(
+            t("common.weighting_mode"),
+            ["default_expert_weight", "equal_weight"],
+            index=0,
+            format_func=lambda value: t(f"weight_modes.{value}", value),
+        )
+        include_scenario = st.checkbox(t("report.include_scenario"))
 
         scenario_kwargs: dict[str, float] = {}
         if include_scenario:
-            st.markdown("#### Scenario Controls")
+            st.markdown(f"#### {t('report.scenario_controls')}")
             scenario_kwargs = scenario_controls()
 
-        generate_clicked = st.button("Generate Report", type="primary", use_container_width=True)
+        generate_clicked = st.button(t("report.generate"), type="primary", use_container_width=True)
 
     if not generate_clicked and "generated_report_text" not in st.session_state:
         with preview_col:
-            st.subheader("Report Preview")
-            st.info("Choose report controls and click Generate Report.")
+            st.subheader(t("report.preview"))
+            st.info(t("report.preview_empty"))
         return
 
     if generate_clicked:
@@ -208,8 +224,8 @@ def main() -> None:
                 scenario_result=scenario_result,
             )
         except Exception as exc:
-            st.error(f"Report generation failed: {exc}")
-            if st.checkbox("Debug report generation"):
+            st.error(t("report.generation_failed", error=exc))
+            if st.checkbox(t("common.debug_report_generation")):
                 st.exception(exc)
             return
 
@@ -223,37 +239,37 @@ def main() -> None:
     scenario_included = bool(st.session_state["generated_report_scenario_included"])
 
     with preview_col:
-        st.subheader("Report Quality Checks")
+        st.subheader(t("report.quality_checks"))
         render_status_cards(report_asset_id, st.session_state["generated_report_weight_mode"], scenario_included)
 
-        st.subheader("Report Preview")
+        st.subheader(t("report.preview"))
         st.markdown(report_text)
 
-        with st.expander("View raw Markdown", expanded=False):
+        with st.expander(t("report.view_raw"), expanded=False):
             st.code(report_text, language="markdown")
 
         download_cols = st.columns(3)
         download_cols[0].download_button(
-            "Download Markdown",
+            t("report.download_markdown"),
             data=report_text,
             file_name=make_report_filename(report_asset_id, scenario_included, "md"),
             mime="text/markdown",
             use_container_width=True,
         )
         download_cols[1].download_button(
-            "Download TXT",
+            t("report.download_txt"),
             data=report_text,
             file_name=make_report_filename(report_asset_id, scenario_included, "txt"),
             mime="text/plain",
             use_container_width=True,
         )
-        if download_cols[2].button("Save report to local reports folder", use_container_width=True):
+        if download_cols[2].button(t("report.save_local"), use_container_width=True):
             try:
                 saved_path = save_timestamped_report(report_text, report_asset_id, scenario_included)
-                st.success(f"Saved report to: {saved_path}")
+                st.success(t("report.saved_to", path=saved_path))
             except Exception as exc:
-                st.error(f"Unable to save report: {exc}")
-                if st.checkbox("Debug save report"):
+                st.error(t("report.save_failed", error=exc))
+                if st.checkbox(t("common.debug_report_generation")):
                     st.exception(exc)
 
 

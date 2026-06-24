@@ -7,12 +7,13 @@ import streamlit as st
 
 from src.data_loader import get_asset_options, get_latest_year_data, load_all_data
 from src.gatekeeper import run_gatekeeper_checks
+from src.i18n import language_selector, t, translate_status
 
 
 st.set_page_config(page_title="Asset Profile", layout="wide")
 
 
-def status_badge(status: str) -> str:
+def status_badge(status: str, label: str | None = None) -> str:
     colors = {
         "Pass": "#1B7F4B",
         "Pass with Warning": "#A96D00",
@@ -20,15 +21,16 @@ def status_badge(status: str) -> str:
         "Fail": "#B42318",
     }
     color = colors.get(status, "#475467")
+    badge_label = label or status
     return (
         f"<span style='display:inline-block;padding:0.25rem 0.55rem;border-radius:999px;"
-        f"background:{color};color:white;font-weight:600;font-size:0.85rem'>{status}</span>"
+        f"background:{color};color:white;font-weight:600;font-size:0.85rem'>{badge_label}</span>"
     )
 
 
 def render_page_header() -> None:
-    st.title("Asset Profile")
-    st.caption("Review asset identity, source notes, Regulatory Gatekeeper results, and latest operating metrics.")
+    st.title(t("asset_profile.title"))
+    st.caption(t("asset_profile.subtitle"))
 
 
 def format_metric_table(df: pd.DataFrame) -> pd.io.formats.style.Styler:
@@ -58,16 +60,17 @@ def format_metric_table(df: pd.DataFrame) -> pd.io.formats.style.Styler:
 
 
 def main() -> None:
+    language_selector()
     render_page_header()
 
     try:
         asset_options = get_asset_options()
-        selected_label = st.selectbox("Asset", list(asset_options.keys()))
+        selected_label = st.selectbox(t("common.select_asset"), list(asset_options.keys()))
         asset_id = asset_options[selected_label]
         data = load_all_data()
     except Exception as exc:
-        st.error(f"Unable to load asset data: {exc}")
-        if st.checkbox("Debug mode"):
+        st.error(t("common.unable_to_load_asset_data", error=exc))
+        if st.checkbox(t("common.debug_mode")):
             st.exception(exc)
         return
 
@@ -82,34 +85,38 @@ def main() -> None:
     except Exception as exc:
         gatekeeper_results = pd.DataFrame()
         overall_status = "Unavailable"
-        summary_text = f"Gatekeeper checks failed: {exc}"
+        summary_text = t("asset_profile.gatekeeper_failed", error=exc)
 
-    st.markdown(status_badge(overall_status), unsafe_allow_html=True)
+    st.markdown(status_badge(overall_status, translate_status(overall_status)), unsafe_allow_html=True)
     st.subheader(asset_row["asset_name"])
 
     profile_tab, gatekeeper_tab, financial_tab, operation_tab, notes_tab = st.tabs(
         [
-            "Basic Profile",
-            "Gatekeeper Results",
-            "Latest Financial Metrics",
-            "Latest Operation Metrics",
-            "Data Source Notes",
+            t("asset_profile.basic_profile"),
+            t("asset_profile.gatekeeper_results"),
+            t("asset_profile.latest_financial_metrics"),
+            t("asset_profile.latest_operation_metrics"),
+            t("asset_profile.data_source_notes"),
         ]
     )
 
     with profile_tab:
         col1, col2, col3 = st.columns(3)
-        col1.metric("Asset type", asset_row["asset_type"])
-        col2.metric("Location", asset_row["location"])
-        col3.metric("Operation years", f"{float(asset_row['operation_years']):.0f}")
+        col1.metric(t("labels.asset_type"), asset_row["asset_type"])
+        col2.metric(t("labels.location"), asset_row["location"])
+        col3.metric(t("labels.operation_years"), f"{float(asset_row['operation_years']):.0f}")
         st.write(asset_row["description"])
-        st.info(f"Demo / Simulated Data Notice: {asset_row['source_note']}")
+        st.info(t("common.source_note_notice", source_note=asset_row["source_note"]))
 
     with gatekeeper_tab:
-        st.markdown(f"**Regulatory Gatekeeper status:** {status_badge(overall_status)}", unsafe_allow_html=True)
+        st.markdown(
+            f"**{t('asset_profile.regulatory_gatekeeper_status')}** "
+            f"{status_badge(overall_status, translate_status(overall_status))}",
+            unsafe_allow_html=True,
+        )
         st.write(summary_text)
         if gatekeeper_results.empty:
-            st.info("Gatekeeper results are unavailable for this asset.")
+            st.info(t("asset_profile.gatekeeper_unavailable"))
         else:
             display_results = gatekeeper_results.copy()
             display_results["status_badge"] = display_results["status"].map(status_badge)
@@ -121,18 +128,18 @@ def main() -> None:
 
     with financial_tab:
         if selected_financial.empty:
-            st.info("Latest financial metrics are unavailable for this asset.")
+            st.info(t("asset_profile.financial_unavailable"))
         else:
             st.dataframe(format_metric_table(selected_financial), use_container_width=True, hide_index=True)
 
     with operation_tab:
         if selected_operation.empty:
-            st.info("Latest operation metrics are unavailable for this asset.")
+            st.info(t("asset_profile.operation_unavailable"))
         else:
             st.dataframe(format_metric_table(selected_operation), use_container_width=True, hide_index=True)
 
     with notes_tab:
-        st.subheader("Data Source Notes")
+        st.subheader(t("asset_profile.data_source_notes"))
         note_rows = []
         for table_name, table_df in {
             "assets": data["assets"],

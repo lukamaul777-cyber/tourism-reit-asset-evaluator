@@ -1,6 +1,6 @@
 # Tourism REIT Asset Evaluator
 
-文旅消费基础设施 REITs 底层资产评估与风险预警平台
+&#25991;&#26053;&#28040;&#36153;&#22522;&#30784;&#35774;&#26045; REITs &#24213;&#23618;&#36164;&#20135;&#35780;&#20272;&#19982;&#39118;&#38505;&#39044;&#35686;&#24179;&#21488;
 
 **Live Demo:** https://tourism-reit-asset-evaluator-slsuamhgrgxskvdnoyns3a.streamlit.app/
 
@@ -10,7 +10,7 @@
 
 Tourism REIT Asset Evaluator is a Streamlit-based data product for evaluating the REITs suitability and risk profile of tourism-related consumption infrastructure assets, including scenic areas, resort complexes, and hotel assets.
 
-The project integrates regulatory-style gatekeeper checks, a reference-based 100-point scoring model, risk warning analytics, model reliability and validity checks, scenario simulation, and automatic report generation. It is designed as a transparent portfolio prototype rather than a black-box rating model.
+The project integrates regulatory-style gatekeeper checks, a reference-based 100-point scoring model, risk warning analytics, model reliability and validity checks, scenario simulation, automatic report generation, and English / Simplified Chinese UI switching. It is designed as a transparent portfolio prototype rather than a black-box rating model.
 
 This project sits at the intersection of digital tourism management, tourism asset operation, REITs suitability analysis, and risk analytics. It demonstrates how structured data, model documentation, validation checks, and product design can support asset-management communication.
 
@@ -29,7 +29,8 @@ Public infrastructure REITs underlying assets require stable operating cash flow
 - **Model Reliability / Validity / Robustness Checks**: content validity, Cronbach's Alpha, AHP status, and weight sensitivity analysis.
 - **Scenario Simulator**: stress-test style revenue, demand, cost, CAPEX, and reputation shocks.
 - **Automatic Report Generator**: deterministic Markdown asset reports.
-- **Data Validation and Configuration Validation**: scripts for checking model config and CSV data templates.
+- **English / Simplified Chinese UI Switching**: sidebar language selector backed by `config/translations.yml`.
+- **Data Validation and Configuration Validation**: scripts for checking model config, translations, and CSV data templates.
 
 ## Product Workflow
 
@@ -90,7 +91,8 @@ tourism-reit-asset-evaluator/
 |-- config/
 |   |-- indicator_framework.yml
 |   |-- model_references.yml
-|   `-- scoring_weights.yml
+|   |-- scoring_weights.yml
+|   `-- translations.yml
 |-- data/
 |   |-- assets.csv
 |   |-- financial_metrics.csv
@@ -123,11 +125,13 @@ tourism-reit-asset-evaluator/
 |   |-- final_check.py
 |   |-- run_model_validity_checks.py
 |   |-- validate_data_files.py
-|   `-- validate_project_config.py
+|   |-- validate_project_config.py
+|   `-- validate_translations.py
 |-- src/
 |   |-- chart_utils.py
 |   |-- data_loader.py
 |   |-- gatekeeper.py
+|   |-- i18n.py
 |   |-- reliability_validity.py
 |   |-- report_generator.py
 |   |-- scenario_simulator.py
@@ -149,6 +153,7 @@ Run validation and backend checks:
 
 ```powershell
 python scripts/validate_project_config.py
+python scripts/validate_translations.py
 python scripts/validate_data_files.py
 python src/gatekeeper.py
 python src/scoring_model.py
@@ -161,6 +166,16 @@ Launch the Streamlit app:
 
 ```powershell
 python -m streamlit run app.py
+```
+
+## Language Switching
+
+The Streamlit app supports English / Simplified Chinese UI switching from the sidebar. UI labels are managed in [config/translations.yml](config/translations.yml); generated asset reports currently remain English.
+
+Run translation validation:
+
+```powershell
+python scripts/validate_translations.py
 ```
 
 ## Deployment
@@ -205,6 +220,7 @@ Rule-based generated report preview with Markdown/TXT download options.
 - Peer normalization depends on the available sample.
 - The scenario simulator uses simplified stress-test assumptions.
 - Model validity is limited by demo data and small sample size.
+- Generated reports currently remain English while bilingual report export is a future enhancement.
 - Results are not investment advice, credit ratings, valuation opinions, or regulatory conclusions.
 
 ## Future Improvements
@@ -213,6 +229,7 @@ Rule-based generated report preview with Markdown/TXT download options.
 - Add real OTA and public review data extraction.
 - Add a larger tourism asset peer group.
 - Implement entropy weighting with a larger verified dataset.
+- Add bilingual report export.
 - Add PDF and Word report export.
 - Add richer deployment documentation and user testing notes.
 

@@ -1,0 +1,490 @@
+en:
+  app:
+    title: Tourism REIT Asset Evaluator
+    subtitle: Tourism-related consumption infrastructure REITs asset evaluation and risk warning platform
+  common:
+    language: "Language / \u8BED\u8A00"
+    english: English
+    chinese: "\u4E2D\u6587"
+    controls: Controls
+    select_asset: Asset
+    selected_asset: Selected asset
+    weighting_mode: Weighting mode
+    debug_mode: Debug mode
+    debug_scoring: Debug scoring
+    debug_simulation: Debug simulation
+    debug_report_generation: Debug report generation
+    data_unavailable: Data unavailable
+    unavailable: Unavailable
+    all: All
+    apply_preset: Apply preset
+    generated_notice_title: Demo / Simulated Data Notice
+    disclaimer: Demo data may include simulated or mixed values. Scores are not official ratings, investment recommendations, valuation opinions, or regulatory conclusions.
+    sidebar_notice: Prototype data may be simulated or mixed. Use the source notes before interpreting any result.
+    source_note_notice: 'Demo / Simulated Data Notice: {source_note}'
+    unable_to_load_data: 'Unable to load app data: {error}'
+    unable_to_load_asset_data: 'Unable to load asset data: {error}'
+    unable_to_load_asset_options: 'Unable to load asset options: {error}'
+    unable_to_load_risk_data: 'Unable to load risk data: {error}'
+    'yes': 'Yes'
+    'no': 'No'
+  labels:
+    asset_count: Asset count
+    average_score: Average REITs Suitability Score
+    highest_scoring_asset: Highest scoring asset
+    assets_with_gatekeeper_warning: Assets with Gatekeeper warning
+    total_score: Total score
+    rating_level: Rating level
+    strongest_module: Strongest module
+    weakest_module: Weakest module
+    indicator_count: Indicator count
+    module_count: Module count
+    required_indicators: Required indicators
+    asset_type: Asset type
+    location: Location
+    operation_years: Operation years
+    data_notice: Data notice
+    gatekeeper_status: Gatekeeper status
+    scenario_included: Scenario included
+  statuses:
+    pass: Pass
+    pass_with_warning: Pass with Warning
+    warning: Warning
+    fail: Fail
+    unavailable: Unavailable
+    high_relative_risk: High relative risk
+    within_sample_range: Within sample range
+  ratings:
+    highly_suitable: Highly Suitable
+    suitable_with_monitoring: Suitable with Monitoring
+    conditional_suitability: Conditional Suitability
+    weak_suitability: Weak Suitability
+    not_suitable: Not Suitable
+  weight_modes:
+    default_expert_weight: Default expert weight
+    equal_weight: Equal weight
+    entropy_weight_placeholder: Entropy weight placeholder
+  home:
+    methodology_flow: Methodology Flow
+    flow_gatekeeper_title: "Regulatory Gatekeeper / \u76D1\u7BA1\u51C6\u5165\u68C0\u67E5"
+    flow_gatekeeper_text: Pre-screen hard suitability conditions.
+    flow_scoring_title: "Reference-Based Scoring / \u53C2\u8003\u6846\u67B6\u8BC4\u5206"
+    flow_scoring_text: Peer-normalized 100-point REITs suitability score.
+    flow_risk_title: "Risk Warning / \u98CE\u9669\u9884\u8B66"
+    flow_risk_text: Sample-relative risk signals and warning flags.
+    flow_validity_title: "Model Validity / \u6A21\u578B\u6709\u6548\u6027"
+    flow_validity_text: Content validity, reliability, and robustness checks.
+    score_ranking: REITs Suitability Score Ranking
+    score_chart_unavailable: Score chart is unavailable because no total scores are available.
+    how_to_read: How to read this dashboard
+    how_to_read_text: '- **Regulatory Gatekeeper** checks hard pre-screening conditions before interpreting scores.
+
+      - **REITs Suitability Score** compares assets using latest-year sample-relative indicators.
+
+      - **Risk Warning** highlights higher relative risk categories without using official thresholds.
+
+      - **Model Validity** explains reference coverage, reliability checks, and robustness diagnostics.
+
+      - Always read `data_type` and `source_note`; simulated values are for portfolio demonstration only.
+
+      '
+    current_sidebar_asset: 'Current sidebar asset selection: {asset_id}. Page-level views use their own selectors.'
+  asset_profile:
+    title: Asset Profile
+    subtitle: Review asset identity, source notes, Regulatory Gatekeeper results, and latest operating metrics.
+    basic_profile: Basic Profile
+    gatekeeper_results: Gatekeeper Results
+    latest_financial_metrics: Latest Financial Metrics
+    latest_operation_metrics: Latest Operation Metrics
+    data_source_notes: Data Source Notes
+    regulatory_gatekeeper_status: 'Regulatory Gatekeeper status:'
+    gatekeeper_unavailable: Gatekeeper results are unavailable for this asset.
+    financial_unavailable: Latest financial metrics are unavailable for this asset.
+    operation_unavailable: Latest operation metrics are unavailable for this asset.
+    gatekeeper_failed: 'Gatekeeper checks failed: {error}'
+  indicator:
+    title: Indicator Framework
+    subtitle: Explore the reference-based indicator system. This page supports content validity by showing how each indicator maps to sources, validation methods, and reliability methods.
+    load_error: 'Unable to load indicator framework: {error}'
+    empty: Indicator framework is empty.
+    content_validity_notice: 'Content validity check: each indicator should have a clear module, data source type, reference framework, reference note, validation method, and reliability method.'
+    count_by_module: Indicator Count by Module
+    module: Module
+    data_source_type: Data source type
+    reference_framework: Reference framework
+    framework_table: Framework Table
+    reference_details: Reference framework and note details
+  score:
+    title: "REITs Suitability Score / REITs \u9002\u914D\u6027\u8BC4\u5206"
+    subtitle: Review the 100-point reference-based score after the Regulatory Gatekeeper. The score is sample-relative and is not an official rating.
+    notice: 'Demo / Simulated Data Notice: scoring outputs are for portfolio demonstration and asset management support only, not investment advice, an official rating, or a regulatory conclusion.'
+    pipeline_failed: 'Scoring pipeline failed: {error}'
+    missing_indicators: Missing indicators excluded from module averages
+    module_radar: Module Score Radar
+    module_radar_unavailable: Module radar chart is unavailable because module scores are missing.
+    indicator_bar: Indicator Score Bar Chart
+    indicator_chart_unavailable: Indicator chart is unavailable because indicator scores are missing.
+    module_table: Module Score Table
+    indicator_table: Indicator Score Table
+  risk:
+    title: "Risk Warning / \u98CE\u9669\u9884\u8B66"
+    subtitle: Review latest risk signals and Regulatory Gatekeeper warnings. High-risk labels are sample-relative, not official thresholds.
+    notice: 'Demo / Simulated Data Notice: risk values marked simulated or mixed are MVP demo values. They are sample-relative warning signals, not official risk disclosures or investment advice.'
+    latest_unavailable: Latest risk metrics are unavailable for this asset.
+    category_cards: Risk Category Cards
+    high_categories: 'High relative risk categories: {categories}.'
+    no_high_categories: No selected risk category is above the sample 75th percentile.
+    radar: Risk Radar Chart
+    radar_unavailable: Risk radar chart is unavailable because risk values are missing.
+    heatmap: Risk Heatmap
+    heatmap_unavailable: Risk heatmap is unavailable because risk values are missing.
+    latest_metrics: Latest Risk Metrics
+    gatekeeper_warning_explanation: Regulatory Gatekeeper Warning Explanation
+    no_gatekeeper_warnings: No Gatekeeper warnings for this asset.
+    warning_error: 'Unable to generate warning explanation: {error}'
+    debug_warnings: Debug warnings
+  validity:
+    title: "Model Validity / \u6A21\u578B\u6709\u6548\u6027"
+    subtitle: Review content validity, reliability, AHP consistency status, and weight-sensitivity robustness diagnostics.
+    pipeline_failed: 'Model validity pipeline failed: {error}'
+    notice: 'Demo / Simulated Data Notice: validity checks are model-governance diagnostics for a small portfolio prototype. They are not proof of official rating validity or investment suitability.'
+    content_validity: Content Validity
+    reliability: Reliability
+    ahp_consistency: AHP Consistency
+    sensitivity_analysis: Sensitivity Analysis
+    limitations: Limitations
+    content_validity_text: Each indicator is mapped to a reference framework, reference note, validation method, and reliability method.
+    cronbach_alpha: Cronbach's Alpha
+    status: Status
+    valid_item_count: Valid item count
+    cronbach_warning: 'Cronbach''s Alpha is applied only to service-quality multi-item fields: tangibles, reliability, responsiveness, assurance, and empathy. It is not applied to financial ratios.'
+    ahp_status: AHP status
+    ahp_not_run: No AHP pass/fail conclusion is shown because no pairwise matrix exists.
+    ranking_stability_ratio: Ranking stability ratio
+    average_spearman: Average Spearman correlation
+    limitations_text: '- Demo data includes simulated or mixed values.
+
+      - The sample size is small, so statistical inference is limited.
+
+      - AHP consistency is only available if an expert pairwise matrix is provided.
+
+      - Sensitivity analysis perturbs weights; it is not scenario simulation.
+
+      - Outputs are not official ratings, regulatory conclusions, valuation opinions, or investment recommendations.
+
+      '
+    generated_report: Generated validity report
+  scenario:
+    title: "Scenario Simulator / \u60C5\u666F\u6A21\u62DF\u5668"
+    subtitle: Tourism asset scenario simulation and stress testing
+    notice: This page estimates how selected operational and financial shocks may affect cash flow, AFFO proxy, distribution coverage, and REITs suitability score. It is a simplified stress-test module, not a forecast, valuation opinion, investment recommendation, or regulatory conclusion.
+    controls: Scenario Controls
+    preset: Scenario preset
+    custom: Custom Scenario
+    mild_downside: Mild Downside
+    demand_shock: Demand Shock
+    stress_case: Stress Case
+    preset_caption: Use Apply preset to populate the sliders with the selected stress-test case.
+    revenue_decline: Revenue decline
+    visitor_volume_decline: Visitor volume decline
+    occupancy_decline: Occupancy decline
+    adr_decline: ADR decline
+    operating_cost_increase: Operating cost increase
+    maintenance_capex_increase: Maintenance CAPEX increase
+    ota_score_decline: OTA score decline
+    failed: 'Scenario simulation failed: {error}'
+    output: Simulation Output
+    base_score: Base REITs Suitability Score
+    simulated_score: Simulated REITs Suitability Score
+    score_change: Score Change
+    severity: Scenario Severity
+    base_distribution_coverage: Base Distribution Coverage
+    simulated_distribution_coverage: Simulated Distribution Coverage
+    affo_change: AFFO Change
+    noi_change: NOI Change
+    score_impact: Score Impact
+    score_comparison_unavailable: Score comparison is unavailable because score data is missing.
+    distribution_impact: Distribution Coverage Impact
+    distribution_unavailable: Distribution coverage cannot be calculated because estimated distribution is unavailable or zero.
+    cash_flow_impact: Cash Flow Impact
+    cash_flow_unavailable: Cash flow impact chart is unavailable because cash flow metrics are missing.
+    waterfall: Score Change Waterfall
+    waterfall_unavailable: Score change waterfall is unavailable because score impact is missing.
+    explanation: Automatic Scenario Explanation
+    base_metrics: Base Metrics
+    simulated_metrics: Simulated Metrics
+    impact_metrics: Impact Metrics
+    demo_comparison: Demo Scenario Comparison
+    demo_caption: Demo scenarios are predefined stress-test cases for comparison and are not forecasts.
+    demo_chart_unavailable: Demo scenario score chart is unavailable.
+    demo_error: 'Unable to run demo scenario comparison: {error}'
+    debug_demo: Debug demo scenarios
+    demo_chart_title: Demo Scenario Simulated Scores
+    simulated_score_axis: Simulated REITs Suitability Score
+    scenario_legend: Scenario
+  report:
+    title: "Report Generator / \u62A5\u544A\u751F\u6210\u5668"
+    subtitle: Asset analysis report generator
+    intro: This page generates a structured asset analysis report based on the Regulatory Gatekeeper, REITs suitability scoring model, risk warning module, model validity notes, and optional scenario simulation results. The report is rule-based, deterministic, and does not use external LLM APIs.
+    disclaimer: Generated reports are for portfolio demonstration and asset management communication only. They are not investment advice, credit ratings, valuation opinions, or official regulatory conclusions.
+    language_note: English report generation is currently supported; bilingual report export is planned as a future enhancement.
+    controls: Report Controls
+    include_scenario: Include scenario simulation result in report
+    scenario_controls: Scenario Controls
+    preset_caption: Use Apply preset to populate the sliders with this predefined stress-test case.
+    generate: Generate Report
+    preview: Report Preview
+    preview_empty: Choose report controls and click Generate Report.
+    generation_failed: 'Report generation failed: {error}'
+    quality_checks: Report Quality Checks
+    view_raw: View raw Markdown
+    download_markdown: Download Markdown
+    download_txt: Download TXT
+    save_local: Save report to local reports folder
+    saved_to: 'Saved report to: {path}'
+    save_failed: 'Unable to save report: {error}'
+    quality_unavailable: 'Report quality status unavailable: {error}'
+    demo_values_may_be_included: Demo / simulated values may be included
+  readme:
+    language_note: The Streamlit app supports English / Simplified Chinese UI switching from the sidebar.
+    translation_validation: 'Run translation validation:'
+zh:
+  app:
+    title: Tourism REIT Asset Evaluator
+    subtitle: "\u6587\u65C5\u6D88\u8D39\u57FA\u7840\u8BBE\u65BD REITs \u5E95\u5C42\u8D44\u4EA7\u8BC4\u4F30\u4E0E\u98CE\u9669\u9884\u8B66\u5E73\u53F0"
+  common:
+    language: "Language / \u8BED\u8A00"
+    english: English
+    chinese: "\u4E2D\u6587"
+    controls: "\u63A7\u5236\u9762\u677F"
+    select_asset: "\u8D44\u4EA7"
+    selected_asset: "\u9009\u62E9\u8D44\u4EA7"
+    weighting_mode: "\u6743\u91CD\u6A21\u5F0F"
+    debug_mode: "\u8C03\u8BD5\u6A21\u5F0F"
+    debug_scoring: "\u8BC4\u5206\u8C03\u8BD5"
+    debug_simulation: "\u60C5\u666F\u6A21\u62DF\u8C03\u8BD5"
+    debug_report_generation: "\u62A5\u544A\u751F\u6210\u8C03\u8BD5"
+    data_unavailable: "\u6570\u636E\u4E0D\u53EF\u7528"
+    unavailable: "\u4E0D\u53EF\u7528"
+    all: "\u5168\u90E8"
+    apply_preset: "\u5E94\u7528\u9884\u8BBE"
+    generated_notice_title: "Demo / Simulated Data Notice / \u6F14\u793A\u4E0E\u6A21\u62DF\u6570\u636E\u8BF4\u660E"
+    disclaimer: "\u6F14\u793A\u6570\u636E\u53EF\u80FD\u5305\u542B\u6A21\u62DF\u503C\u6216\u6DF7\u5408\u503C\u3002\u8BC4\u5206\u7ED3\u679C\u4E0D\u662F\u5B98\u65B9\u8BC4\u7EA7\u3001\u6295\u8D44\u5EFA\u8BAE\u3001\u4F30\u503C\u610F\u89C1\u6216\u76D1\u7BA1\u7ED3\u8BBA\u3002"
+    sidebar_notice: "\u539F\u578B\u6570\u636E\u53EF\u80FD\u4E3A\u6A21\u62DF\u6216\u6DF7\u5408\u6570\u636E\u3002\u89E3\u8BFB\u4EFB\u4F55\u7ED3\u679C\u524D\uFF0C\u8BF7\u5148\u67E5\u770B\u6570\u636E\u6765\u6E90\u8BF4\u660E\u3002"
+    source_note_notice: "Demo / Simulated Data Notice / \u6F14\u793A\u4E0E\u6A21\u62DF\u6570\u636E\u8BF4\u660E\uFF1A{source_note}"
+    unable_to_load_data: "\u65E0\u6CD5\u52A0\u8F7D\u5E94\u7528\u6570\u636E\uFF1A{error}"
+    unable_to_load_asset_data: "\u65E0\u6CD5\u52A0\u8F7D\u8D44\u4EA7\u6570\u636E\uFF1A{error}"
+    unable_to_load_asset_options: "\u65E0\u6CD5\u52A0\u8F7D\u8D44\u4EA7\u9009\u9879\uFF1A{error}"
+    unable_to_load_risk_data: "\u65E0\u6CD5\u52A0\u8F7D\u98CE\u9669\u6570\u636E\uFF1A{error}"
+    'yes': 'Yes'
+    'no': 'No'
+  labels:
+    asset_count: "\u8D44\u4EA7\u6570\u91CF"
+    average_score: "\u5E73\u5747 REITs \u9002\u914D\u6027\u8BC4\u5206"
+    highest_scoring_asset: "\u6700\u9AD8\u8BC4\u5206\u8D44\u4EA7"
+    assets_with_gatekeeper_warning: "\u5B58\u5728\u51C6\u5165\u9884\u8B66\u7684\u8D44\u4EA7"
+    total_score: "\u603B\u5206"
+    rating_level: "\u8BC4\u7EA7\u5C42\u7EA7"
+    strongest_module: "\u6700\u5F3A\u6A21\u5757"
+    weakest_module: "\u6700\u5F31\u6A21\u5757"
+    indicator_count: "\u6307\u6807\u6570\u91CF"
+    module_count: "\u6A21\u5757\u6570\u91CF"
+    required_indicators: "\u5FC5\u9700\u6307\u6807"
+    asset_type: "\u8D44\u4EA7\u7C7B\u578B"
+    location: "\u6240\u5728\u5730"
+    operation_years: "\u8FD0\u8425\u5E74\u9650"
+    data_notice: "\u6570\u636E\u8BF4\u660E"
+    gatekeeper_status: "\u51C6\u5165\u68C0\u67E5\u72B6\u6001"
+    scenario_included: "\u662F\u5426\u5305\u542B\u60C5\u666F\u6A21\u62DF"
+  statuses:
+    pass: "\u901A\u8FC7"
+    pass_with_warning: "\u901A\u8FC7\u4F46\u6709\u9884\u8B66"
+    warning: "\u9884\u8B66"
+    fail: "\u672A\u901A\u8FC7"
+    unavailable: "\u4E0D\u53EF\u7528"
+    high_relative_risk: "\u76F8\u5BF9\u9AD8\u98CE\u9669"
+    within_sample_range: "\u5904\u4E8E\u6837\u672C\u8303\u56F4\u5185"
+  ratings:
+    highly_suitable: "\u9AD8\u5EA6\u9002\u914D"
+    suitable_with_monitoring: "\u9002\u914D\u4F46\u9700\u76D1\u6D4B"
+    conditional_suitability: "\u6709\u6761\u4EF6\u9002\u914D"
+    weak_suitability: "\u9002\u914D\u6027\u8F83\u5F31"
+    not_suitable: "\u4E0D\u9002\u914D"
+  weight_modes:
+    default_expert_weight: "\u9ED8\u8BA4\u4E13\u5BB6\u6743\u91CD"
+    equal_weight: "\u7B49\u6743\u91CD"
+    entropy_weight_placeholder: "\u71B5\u6743\u6CD5\u5360\u4F4D\u6A21\u5F0F"
+  home:
+    methodology_flow: "\u65B9\u6CD5\u6D41\u7A0B"
+    flow_gatekeeper_title: "Regulatory Gatekeeper / \u76D1\u7BA1\u51C6\u5165\u68C0\u67E5"
+    flow_gatekeeper_text: "\u5148\u68C0\u67E5\u786C\u6027\u9002\u914D\u6761\u4EF6\u3002"
+    flow_scoring_title: "Reference-Based Scoring / \u53C2\u8003\u6846\u67B6\u8BC4\u5206"
+    flow_scoring_text: "\u57FA\u4E8E\u540C\u4E1A\u6837\u672C\u5F52\u4E00\u5316\u7684 100 \u5206 REITs \u9002\u914D\u6027\u8BC4\u5206\u3002"
+    flow_risk_title: "Risk Warning / \u98CE\u9669\u9884\u8B66"
+    flow_risk_text: "\u5C55\u793A\u6837\u672C\u76F8\u5BF9\u98CE\u9669\u4FE1\u53F7\u548C\u9884\u8B66\u6807\u8BC6\u3002"
+    flow_validity_title: "Model Validity / \u6A21\u578B\u6709\u6548\u6027"
+    flow_validity_text: "\u5C55\u793A\u5185\u5BB9\u6548\u5EA6\u3001\u53EF\u9760\u6027\u4E0E\u7A33\u5065\u6027\u68C0\u67E5\u3002"
+    score_ranking: "REITs \u9002\u914D\u6027\u8BC4\u5206\u6392\u540D"
+    score_chart_unavailable: "\u7531\u4E8E\u603B\u5206\u6570\u636E\u4E0D\u53EF\u7528\uFF0C\u8BC4\u5206\u56FE\u8868\u6682\u65E0\u6CD5\u5C55\u793A\u3002"
+    how_to_read: "\u5982\u4F55\u9605\u8BFB\u672C\u770B\u677F"
+    how_to_read_text: "- **Regulatory Gatekeeper / \u76D1\u7BA1\u51C6\u5165\u68C0\u67E5** \u7528\u4E8E\u5728\u89E3\u8BFB\u8BC4\u5206\u524D\u68C0\u67E5\u786C\u6027\u6761\u4EF6\u3002\n- **REITs Suitability Score / REITs \u9002\u914D\u6027\u8BC4\u5206** \u4F7F\u7528\u6700\u65B0\u5E74\u5EA6\u3001\u6837\u672C\u76F8\u5BF9\u6307\u6807\u6BD4\u8F83\u8D44\u4EA7\u3002\n- **Risk Warning / \u98CE\u9669\u9884\u8B66** \u5C55\u793A\u76F8\u5BF9\u9AD8\u98CE\u9669\u7C7B\u522B\uFF0C\u4E0D\u4F7F\u7528\u5B98\u65B9\u9608\u503C\u3002\n- **Model Validity / \u6A21\u578B\u6709\u6548\u6027** \u8BF4\u660E\u53C2\u8003\u6846\u67B6\u8986\u76D6\u3001\u53EF\u9760\u6027\u68C0\u67E5\u548C\u7A33\u5065\u6027\u8BCA\u65AD\u3002\n- \u8BF7\u59CB\u7EC8\u67E5\u770B `data_type` \u548C `source_note`\uFF1B\u6A21\u62DF\u503C\u4EC5\u7528\u4E8E\u4F5C\u54C1\u96C6\u6F14\u793A\u3002"
+    current_sidebar_asset: "\u5F53\u524D\u4FA7\u8FB9\u680F\u8D44\u4EA7\u9009\u62E9\uFF1A{asset_id}\u3002\u5404\u9875\u9762\u89C6\u56FE\u4F7F\u7528\u72EC\u7ACB\u9009\u62E9\u5668\u3002"
+  asset_profile:
+    title: "Asset Profile / \u8D44\u4EA7\u753B\u50CF"
+    subtitle: "\u67E5\u770B\u8D44\u4EA7\u8EAB\u4EFD\u3001\u6570\u636E\u6765\u6E90\u8BF4\u660E\u3001\u76D1\u7BA1\u51C6\u5165\u68C0\u67E5\u7ED3\u679C\u548C\u6700\u65B0\u8FD0\u8425\u6307\u6807\u3002"
+    basic_profile: "\u57FA\u7840\u753B\u50CF"
+    gatekeeper_results: "\u51C6\u5165\u68C0\u67E5\u7ED3\u679C"
+    latest_financial_metrics: "\u6700\u65B0\u8D22\u52A1\u6307\u6807"
+    latest_operation_metrics: "\u6700\u65B0\u8FD0\u8425\u6307\u6807"
+    data_source_notes: "\u6570\u636E\u6765\u6E90\u8BF4\u660E"
+    regulatory_gatekeeper_status: "\u76D1\u7BA1\u51C6\u5165\u68C0\u67E5\u72B6\u6001\uFF1A"
+    gatekeeper_unavailable: "\u8BE5\u8D44\u4EA7\u7684\u51C6\u5165\u68C0\u67E5\u7ED3\u679C\u4E0D\u53EF\u7528\u3002"
+    financial_unavailable: "\u8BE5\u8D44\u4EA7\u7684\u6700\u65B0\u8D22\u52A1\u6307\u6807\u4E0D\u53EF\u7528\u3002"
+    operation_unavailable: "\u8BE5\u8D44\u4EA7\u7684\u6700\u65B0\u8FD0\u8425\u6307\u6807\u4E0D\u53EF\u7528\u3002"
+    gatekeeper_failed: "\u51C6\u5165\u68C0\u67E5\u5931\u8D25\uFF1A{error}"
+  indicator:
+    title: "Indicator Framework / \u6307\u6807\u6846\u67B6"
+    subtitle: "\u67E5\u770B\u57FA\u4E8E\u53C2\u8003\u6846\u67B6\u7684\u6307\u6807\u4F53\u7CFB\u3002\u672C\u9875\u901A\u8FC7\u5C55\u793A\u6307\u6807\u4E0E\u6765\u6E90\u3001\u9A8C\u8BC1\u65B9\u6CD5\u548C\u53EF\u9760\u6027\u65B9\u6CD5\u7684\u6620\u5C04\u6765\u652F\u6301\u5185\u5BB9\u6548\u5EA6\u3002"
+    load_error: "\u65E0\u6CD5\u52A0\u8F7D\u6307\u6807\u6846\u67B6\uFF1A{error}"
+    empty: "\u6307\u6807\u6846\u67B6\u4E3A\u7A7A\u3002"
+    content_validity_notice: "\u5185\u5BB9\u6548\u5EA6\u68C0\u67E5\uFF1A\u6BCF\u4E2A\u6307\u6807\u5E94\u5305\u542B\u6E05\u6670\u7684\u6A21\u5757\u3001\u6570\u636E\u6765\u6E90\u7C7B\u578B\u3001\u53C2\u8003\u6846\u67B6\u3001\u53C2\u8003\u8BF4\u660E\u3001\u9A8C\u8BC1\u65B9\u6CD5\u548C\u53EF\u9760\u6027\u65B9\u6CD5\u3002"
+    count_by_module: "\u5404\u6A21\u5757\u6307\u6807\u6570\u91CF"
+    module: "\u6A21\u5757"
+    data_source_type: "\u6570\u636E\u6765\u6E90\u7C7B\u578B"
+    reference_framework: "\u53C2\u8003\u6846\u67B6"
+    framework_table: "\u6307\u6807\u6846\u67B6\u8868"
+    reference_details: "\u53C2\u8003\u6846\u67B6\u4E0E\u8BF4\u660E\u8BE6\u60C5"
+  score:
+    title: "REITs Suitability Score / REITs \u9002\u914D\u6027\u8BC4\u5206"
+    subtitle: "\u5728\u76D1\u7BA1\u51C6\u5165\u68C0\u67E5\u4E4B\u540E\u67E5\u770B 100 \u5206\u53C2\u8003\u6846\u67B6\u8BC4\u5206\u3002\u8BE5\u8BC4\u5206\u4E3A\u6837\u672C\u76F8\u5BF9\u8BC4\u5206\uFF0C\u4E0D\u662F\u5B98\u65B9\u8BC4\u7EA7\u3002"
+    notice: "Demo / Simulated Data Notice / \u6F14\u793A\u4E0E\u6A21\u62DF\u6570\u636E\u8BF4\u660E\uFF1A\u8BC4\u5206\u8F93\u51FA\u4EC5\u7528\u4E8E\u4F5C\u54C1\u96C6\u6F14\u793A\u548C\u8D44\u4EA7\u7BA1\u7406\u6C9F\u901A\uFF0C\u4E0D\u6784\u6210\u6295\u8D44\u5EFA\u8BAE\u3001\u5B98\u65B9\u8BC4\u7EA7\u6216\u76D1\u7BA1\u7ED3\u8BBA\u3002"
+    pipeline_failed: "\u8BC4\u5206\u6D41\u7A0B\u5931\u8D25\uFF1A{error}"
+    missing_indicators: "\u4ECE\u6A21\u5757\u5747\u503C\u4E2D\u6392\u9664\u7684\u7F3A\u5931\u6307\u6807\u6570\u91CF"
+    module_radar: "\u6A21\u5757\u8BC4\u5206\u96F7\u8FBE\u56FE"
+    module_radar_unavailable: "\u7531\u4E8E\u6A21\u5757\u8BC4\u5206\u7F3A\u5931\uFF0C\u6A21\u5757\u96F7\u8FBE\u56FE\u6682\u65E0\u6CD5\u5C55\u793A\u3002"
+    indicator_bar: "\u6307\u6807\u8BC4\u5206\u67F1\u72B6\u56FE"
+    indicator_chart_unavailable: "\u7531\u4E8E\u6307\u6807\u8BC4\u5206\u7F3A\u5931\uFF0C\u6307\u6807\u56FE\u8868\u6682\u65E0\u6CD5\u5C55\u793A\u3002"
+    module_table: "\u6A21\u5757\u8BC4\u5206\u8868"
+    indicator_table: "\u6307\u6807\u8BC4\u5206\u8868"
+  risk:
+    title: "Risk Warning / \u98CE\u9669\u9884\u8B66"
+    subtitle: "\u67E5\u770B\u6700\u65B0\u98CE\u9669\u4FE1\u53F7\u548C\u76D1\u7BA1\u51C6\u5165\u9884\u8B66\u3002\u9AD8\u98CE\u9669\u6807\u7B7E\u57FA\u4E8E\u6837\u672C\u76F8\u5BF9\u6C34\u5E73\uFF0C\u4E0D\u662F\u5B98\u65B9\u9608\u503C\u3002"
+    notice: "Demo / Simulated Data Notice / \u6F14\u793A\u4E0E\u6A21\u62DF\u6570\u636E\u8BF4\u660E\uFF1A\u6807\u8BB0\u4E3A simulated \u6216 mixed \u7684\u98CE\u9669\u503C\u662F MVP \u6F14\u793A\u503C\u3002\u5B83\u4EEC\u662F\u6837\u672C\u76F8\u5BF9\u9884\u8B66\u4FE1\u53F7\uFF0C\u4E0D\u662F\u5B98\u65B9\u98CE\u9669\u62AB\u9732\u6216\u6295\u8D44\u5EFA\u8BAE\u3002"
+    latest_unavailable: Latest risk metrics are unavailable for this asset.
+    category_cards: "\u98CE\u9669\u7C7B\u522B\u5361\u7247"
+    high_categories: "\u76F8\u5BF9\u9AD8\u98CE\u9669\u7C7B\u522B\uFF1A{categories}\u3002"
+    no_high_categories: "\u6240\u9009\u98CE\u9669\u7C7B\u522B\u5747\u672A\u9AD8\u4E8E\u6837\u672C 75 \u5206\u4F4D\u3002"
+    radar: "\u98CE\u9669\u96F7\u8FBE\u56FE"
+    radar_unavailable: Risk radar chart is unavailable because risk values are missing.
+    heatmap: "\u98CE\u9669\u70ED\u529B\u56FE"
+    heatmap_unavailable: Risk heatmap is unavailable because risk values are missing.
+    latest_metrics: "\u6700\u65B0\u98CE\u9669\u6307\u6807"
+    gatekeeper_warning_explanation: "\u76D1\u7BA1\u51C6\u5165\u9884\u8B66\u89E3\u91CA"
+    no_gatekeeper_warnings: "\u8BE5\u8D44\u4EA7\u6CA1\u6709\u51C6\u5165\u68C0\u67E5\u9884\u8B66\u3002"
+    warning_error: 'Unable to generate warning explanation: {error}'
+    debug_warnings: Debug warnings
+  validity:
+    title: "Model Validity / \u6A21\u578B\u6709\u6548\u6027"
+    subtitle: "\u67E5\u770B\u5185\u5BB9\u6548\u5EA6\u3001\u53EF\u9760\u6027\u3001AHP \u4E00\u81F4\u6027\u72B6\u6001\u548C\u6743\u91CD\u654F\u611F\u6027\u7A33\u5065\u6027\u8BCA\u65AD\u3002"
+    pipeline_failed: 'Model validity pipeline failed: {error}'
+    notice: 'Demo / Simulated Data Notice: validity checks are model-governance diagnostics for a small portfolio prototype. They are not proof of official rating validity or investment suitability.'
+    content_validity: "\u5185\u5BB9\u6548\u5EA6"
+    reliability: "\u53EF\u9760\u6027"
+    ahp_consistency: "AHP \u4E00\u81F4\u6027"
+    sensitivity_analysis: "\u654F\u611F\u6027\u5206\u6790"
+    limitations: "\u5C40\u9650\u6027"
+    content_validity_text: Each indicator is mapped to a reference framework, reference note, validation method, and reliability method.
+    cronbach_alpha: Cronbach's Alpha
+    status: Status
+    valid_item_count: Valid item count
+    cronbach_warning: 'Cronbach''s Alpha is applied only to service-quality multi-item fields: tangibles, reliability, responsiveness, assurance, and empathy. It is not applied to financial ratios.'
+    ahp_status: AHP status
+    ahp_not_run: No AHP pass/fail conclusion is shown because no pairwise matrix exists.
+    ranking_stability_ratio: Ranking stability ratio
+    average_spearman: Average Spearman correlation
+    limitations_text: '- Demo data includes simulated or mixed values.
+
+      - The sample size is small, so statistical inference is limited.
+
+      - AHP consistency is only available if an expert pairwise matrix is provided.
+
+      - Sensitivity analysis perturbs weights; it is not scenario simulation.
+
+      - Outputs are not official ratings, regulatory conclusions, valuation opinions, or investment recommendations.
+
+      '
+    generated_report: Generated validity report
+  scenario:
+    title: "Scenario Simulator / \u60C5\u666F\u6A21\u62DF\u5668"
+    subtitle: "\u6587\u65C5\u8D44\u4EA7\u60C5\u666F\u6A21\u62DF\u4E0E\u538B\u529B\u6D4B\u8BD5"
+    notice: This page estimates how selected operational and financial shocks may affect cash flow, AFFO proxy, distribution coverage, and REITs suitability score. It is a simplified stress-test module, not a forecast, valuation opinion, investment recommendation, or regulatory conclusion.
+    controls: "\u60C5\u666F\u63A7\u5236"
+    preset: "\u60C5\u666F\u9884\u8BBE"
+    custom: "Custom Scenario / \u81EA\u5B9A\u4E49\u60C5\u666F"
+    mild_downside: "Mild Downside / \u6E29\u548C\u4E0B\u884C\u60C5\u666F"
+    demand_shock: "Demand Shock / \u9700\u6C42\u51B2\u51FB"
+    stress_case: "Stress Case / \u538B\u529B\u60C5\u666F"
+    preset_caption: Use Apply preset to populate the sliders with the selected stress-test case.
+    revenue_decline: Revenue decline
+    visitor_volume_decline: Visitor volume decline
+    occupancy_decline: Occupancy decline
+    adr_decline: ADR decline
+    operating_cost_increase: Operating cost increase
+    maintenance_capex_increase: Maintenance CAPEX increase
+    ota_score_decline: OTA score decline
+    failed: 'Scenario simulation failed: {error}'
+    output: "\u6A21\u62DF\u8F93\u51FA"
+    base_score: "\u57FA\u51C6 REITs \u9002\u914D\u6027\u8BC4\u5206"
+    simulated_score: "\u6A21\u62DF\u540E REITs \u9002\u914D\u6027\u8BC4\u5206"
+    score_change: "\u8BC4\u5206\u53D8\u5316"
+    severity: "\u60C5\u666F\u5F71\u54CD\u7B49\u7EA7"
+    base_distribution_coverage: Base Distribution Coverage
+    simulated_distribution_coverage: Simulated Distribution Coverage
+    affo_change: AFFO Change
+    noi_change: NOI Change
+    score_impact: Score Impact
+    score_comparison_unavailable: Score comparison is unavailable because score data is missing.
+    distribution_impact: Distribution Coverage Impact
+    distribution_unavailable: Distribution coverage cannot be calculated because estimated distribution is unavailable or zero.
+    cash_flow_impact: Cash Flow Impact
+    cash_flow_unavailable: Cash flow impact chart is unavailable because cash flow metrics are missing.
+    waterfall: Score Change Waterfall
+    waterfall_unavailable: Score change waterfall is unavailable because score impact is missing.
+    explanation: Automatic Scenario Explanation
+    base_metrics: Base Metrics
+    simulated_metrics: Simulated Metrics
+    impact_metrics: Impact Metrics
+    demo_comparison: "\u6F14\u793A\u60C5\u666F\u5BF9\u6BD4"
+    demo_caption: Demo scenarios are predefined stress-test cases for comparison and are not forecasts.
+    demo_chart_unavailable: Demo scenario score chart is unavailable.
+    demo_error: 'Unable to run demo scenario comparison: {error}'
+    debug_demo: Debug demo scenarios
+    demo_chart_title: Demo Scenario Simulated Scores
+    simulated_score_axis: Simulated REITs Suitability Score
+    scenario_legend: Scenario
+  report:
+    title: "Report Generator / \u62A5\u544A\u751F\u6210\u5668"
+    subtitle: "\u8D44\u4EA7\u5206\u6790\u62A5\u544A\u751F\u6210\u5668"
+    intro: This page generates a structured asset analysis report based on the Regulatory Gatekeeper, REITs suitability scoring model, risk warning module, model validity notes, and optional scenario simulation results. The report is rule-based, deterministic, and does not use external LLM APIs.
+    disclaimer: Generated reports are for portfolio demonstration and asset management communication only. They are not investment advice, credit ratings, valuation opinions, or official regulatory conclusions.
+    language_note: "\u5F53\u524D\u652F\u6301\u82F1\u6587\u62A5\u544A\u751F\u6210\uFF1B\u53CC\u8BED\u62A5\u544A\u5BFC\u51FA\u8BA1\u5212\u4F5C\u4E3A\u540E\u7EED\u589E\u5F3A\u3002"
+    controls: "\u62A5\u544A\u63A7\u5236"
+    include_scenario: Include scenario simulation result in report
+    scenario_controls: Scenario Controls
+    preset_caption: Use Apply preset to populate the sliders with this predefined stress-test case.
+    generate: "\u751F\u6210\u62A5\u544A"
+    preview: "\u62A5\u544A\u9884\u89C8"
+    preview_empty: Choose report controls and click Generate Report.
+    generation_failed: 'Report generation failed: {error}'
+    quality_checks: "\u62A5\u544A\u8D28\u91CF\u68C0\u67E5"
+    view_raw: View raw Markdown
+    download_markdown: "\u4E0B\u8F7D Markdown"
+    download_txt: "\u4E0B\u8F7D TXT"
+    save_local: "\u4FDD\u5B58\u62A5\u544A\u5230\u672C\u5730 reports \u6587\u4EF6\u5939"
+    saved_to: 'Saved report to: {path}'
+    save_failed: 'Unable to save report: {error}'
+    quality_unavailable: 'Report quality status unavailable: {error}'
+    demo_values_may_be_included: Demo / simulated values may be included
+  readme:
+    language_note: "Streamlit \u5E94\u7528\u652F\u6301\u5728\u4FA7\u8FB9\u680F\u8FDB\u884C English / Simplified Chinese UI \u5207\u6362\u3002"
+    translation_validation: "\u8FD0\u884C\u7FFB\u8BD1\u6821\u9A8C\uFF1A"

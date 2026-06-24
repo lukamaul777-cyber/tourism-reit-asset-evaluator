@@ -7,6 +7,7 @@ import streamlit as st
 
 from src.chart_utils import make_indicator_bar_chart, make_module_score_radar
 from src.data_loader import get_asset_options
+from src.i18n import language_selector, t, translate_rating
 from src.scoring_model import ENTROPY_PLACEHOLDER_MESSAGE, run_scoring_pipeline
 
 
@@ -14,30 +15,26 @@ st.set_page_config(page_title="REIT Fit Score", layout="wide")
 
 
 def main() -> None:
-    st.title("REITs Suitability Score")
-    st.caption(
-        "Review the 100-point reference-based score after the Regulatory Gatekeeper. "
-        "The score is sample-relative and is not an official rating."
-    )
-    st.info(
-        "Demo / Simulated Data Notice: scoring outputs are for portfolio demonstration and asset management support only, "
-        "not investment advice, an official rating, or a regulatory conclusion."
-    )
+    language_selector()
+    st.title(t("score.title"))
+    st.caption(t("score.subtitle"))
+    st.info(t("score.notice"))
 
     try:
         asset_options = get_asset_options()
-        selected_label = st.selectbox("Asset", list(asset_options.keys()))
+        selected_label = st.selectbox(t("common.select_asset"), list(asset_options.keys()))
         asset_id = asset_options[selected_label]
     except Exception as exc:
-        st.error(f"Unable to load asset options: {exc}")
-        if st.checkbox("Debug mode"):
+        st.error(t("common.unable_to_load_asset_options", error=exc))
+        if st.checkbox(t("common.debug_mode")):
             st.exception(exc)
         return
 
     weight_mode = st.selectbox(
-        "Weighting mode",
+        t("common.weighting_mode"),
         ["default_expert_weight", "equal_weight", "entropy_weight_placeholder"],
         index=0,
+        format_func=lambda value: t(f"weight_modes.{value}", value),
     )
     effective_weight_mode = weight_mode
     if weight_mode == "entropy_weight_placeholder":
@@ -49,8 +46,8 @@ def main() -> None:
             weight_mode=effective_weight_mode
         )
     except Exception as exc:
-        st.error(f"Scoring pipeline failed: {exc}")
-        if st.checkbox("Debug scoring"):
+        st.error(t("score.pipeline_failed", error=exc))
+        if st.checkbox(t("common.debug_scoring")):
             st.exception(exc)
         return
 
@@ -71,37 +68,37 @@ def main() -> None:
     missing_indicator_count = int(selected_modules["missing_indicator_count"].sum())
 
     kpi_cols = st.columns(4)
-    kpi_cols[0].metric("Total score", f"{selected_total['total_score']:.1f}")
-    kpi_cols[1].metric("Rating level", selected_total["rating_level"])
-    kpi_cols[2].metric("Strongest module", strongest_module)
-    kpi_cols[3].metric("Weakest module", weakest_module)
+    kpi_cols[0].metric(t("labels.total_score"), f"{selected_total['total_score']:.1f}")
+    kpi_cols[1].metric(t("labels.rating_level"), translate_rating(selected_total["rating_level"]))
+    kpi_cols[2].metric(t("labels.strongest_module"), strongest_module)
+    kpi_cols[3].metric(t("labels.weakest_module"), weakest_module)
 
-    st.metric("Missing indicators excluded from module averages", missing_indicator_count)
+    st.metric(t("score.missing_indicators"), missing_indicator_count)
     st.write(selected_total["explanation"])
 
     chart_cols = st.columns([1, 1])
     with chart_cols[0]:
-        st.subheader("Module Score Radar")
+        st.subheader(t("score.module_radar"))
         if selected_modules.dropna(subset=["module_score"]).empty:
-            st.info("Module radar chart is unavailable because module scores are missing.")
+            st.info(t("score.module_radar_unavailable"))
         else:
             st.plotly_chart(make_module_score_radar(module_scores_df, asset_id), use_container_width=True)
 
     with chart_cols[1]:
-        st.subheader("Indicator Score Bar Chart")
+        st.subheader(t("score.indicator_bar"))
         if selected_indicators.dropna(subset=["indicator_score"]).empty:
-            st.info("Indicator chart is unavailable because indicator scores are missing.")
+            st.info(t("score.indicator_chart_unavailable"))
         else:
             st.plotly_chart(make_indicator_bar_chart(indicator_scores_df, asset_id), use_container_width=True)
 
-    st.subheader("Module Score Table")
+    st.subheader(t("score.module_table"))
     st.dataframe(
         selected_modules.style.format({"module_score": "{:.1f}"}, na_rep="N/A"),
         use_container_width=True,
         hide_index=True,
     )
 
-    st.subheader("Indicator Score Table")
+    st.subheader(t("score.indicator_table"))
     display_indicators = selected_indicators[
         [
             "indicator_id",

@@ -8,6 +8,7 @@ import streamlit as st
 from src.chart_utils import make_score_bar_chart
 from src.data_loader import get_asset_options, load_all_data
 from src.gatekeeper import run_gatekeeper_checks
+from src.i18n import language_selector, t
 from src.scoring_model import ENTROPY_PLACEHOLDER_MESSAGE, run_scoring_pipeline
 
 
@@ -23,18 +24,16 @@ def render_page_header(title: str, subtitle: str) -> None:
 
 
 def render_notice() -> None:
-    st.info(
-        "**Demo / Simulated Data Notice:** Demo data may include simulated or mixed values. "
-        "Scores are not official ratings, investment recommendations, or regulatory conclusions."
-    )
+    st.info(f"**{t('common.generated_notice_title')}:** {t('common.disclaimer')}")
 
 
 def selected_weight_mode() -> str:
     return st.sidebar.selectbox(
-        "Weighting mode",
+        t("common.weighting_mode"),
         ["default_expert_weight", "equal_weight", "entropy_weight_placeholder"],
         index=0,
-        help="Entropy weighting is reserved for a larger verified dataset.",
+        format_func=lambda value: t(f"weight_modes.{value}", value),
+        help=ENTROPY_PLACEHOLDER_MESSAGE,
     )
 
 
@@ -48,13 +47,13 @@ def count_gatekeeper_warnings(asset_ids: list[str]) -> int:
 
 
 def render_methodology_flow() -> None:
-    st.subheader("Methodology Flow")
+    st.subheader(t("home.methodology_flow"))
     columns = st.columns(4)
     steps = [
-        ("1", "Regulatory Gatekeeper", "Pre-screen hard suitability conditions."),
-        ("2", "Reference-Based Scoring", "Peer-normalized 100-point REITs suitability score."),
-        ("3", "Risk Warning", "Sample-relative risk signals and warning flags."),
-        ("4", "Model Validity", "Content validity, reliability, and robustness checks."),
+        ("1", t("home.flow_gatekeeper_title"), t("home.flow_gatekeeper_text")),
+        ("2", t("home.flow_scoring_title"), t("home.flow_scoring_text")),
+        ("3", t("home.flow_risk_title"), t("home.flow_risk_text")),
+        ("4", t("home.flow_validity_title"), t("home.flow_validity_text")),
     ]
     for column, (number, title, text) in zip(columns, steps):
         with column:
@@ -63,29 +62,28 @@ def render_methodology_flow() -> None:
 
 
 def main() -> None:
+    language_selector()
     render_page_header(
-        "Tourism REIT Asset Evaluator",
-        "文旅消费基础设施 REITs 底层资产评估与风险预警平台",
+        t("app.title"),
+        t("app.subtitle"),
     )
 
-    st.sidebar.header("Controls")
+    st.sidebar.header(t("common.controls"))
     weight_mode = selected_weight_mode()
 
     try:
         asset_options = get_asset_options()
-        selected_asset_label = st.sidebar.selectbox("Selected asset", list(asset_options.keys()))
+        selected_asset_label = st.sidebar.selectbox(t("common.selected_asset"), list(asset_options.keys()))
         selected_asset_id = asset_options[selected_asset_label]
         all_data = load_all_data()
     except Exception as exc:
-        st.error(f"Unable to load app data: {exc}")
-        if st.sidebar.checkbox("Debug mode"):
+        st.error(t("common.unable_to_load_data", error=exc))
+        if st.sidebar.checkbox(t("common.debug_mode")):
             st.exception(exc)
         return
 
-    st.sidebar.markdown("### Demo / Simulated Data Notice")
-    st.sidebar.caption(
-        "Prototype data may be simulated or mixed. Use the source notes before interpreting any result."
-    )
+    st.sidebar.markdown(f"### {t('common.generated_notice_title')}")
+    st.sidebar.caption(t("common.sidebar_notice"))
 
     render_notice()
 
@@ -99,8 +97,8 @@ def main() -> None:
             weight_mode=effective_weight_mode
         )
     except Exception as exc:
-        st.error(f"Scoring pipeline failed: {exc}")
-        if st.sidebar.checkbox("Debug mode"):
+        st.error(t("score.pipeline_failed", error=exc))
+        if st.sidebar.checkbox(t("common.debug_mode")):
             st.exception(exc)
         return
 
@@ -110,14 +108,14 @@ def main() -> None:
     warning_count = count_gatekeeper_warnings(asset_ids)
 
     kpi_cols = st.columns(4)
-    kpi_cols[0].metric("Asset count", len(asset_ids))
-    kpi_cols[1].metric("Average REITs Suitability Score", f"{average_score:.1f}")
-    kpi_cols[2].metric("Highest scoring asset", highest_row["asset_name"])
-    kpi_cols[3].metric("Assets with Gatekeeper warning", warning_count)
+    kpi_cols[0].metric(t("labels.asset_count"), len(asset_ids))
+    kpi_cols[1].metric(t("labels.average_score"), f"{average_score:.1f}")
+    kpi_cols[2].metric(t("labels.highest_scoring_asset"), highest_row["asset_name"])
+    kpi_cols[3].metric(t("labels.assets_with_gatekeeper_warning"), warning_count)
 
     render_methodology_flow()
 
-    st.subheader("REITs Suitability Score Ranking")
+    st.subheader(t("home.score_ranking"))
     display_columns = [
         "asset_id",
         "asset_name",
@@ -145,22 +143,14 @@ def main() -> None:
     )
 
     if total_scores_df.dropna(subset=["total_score"]).empty:
-        st.info("Score chart is unavailable because no total scores are available.")
+        st.info(t("home.score_chart_unavailable"))
     else:
         st.plotly_chart(make_score_bar_chart(total_scores_df), use_container_width=True)
 
-    with st.expander("How to read this dashboard", expanded=True):
-        st.markdown(
-            """
-            - **Regulatory Gatekeeper** checks hard pre-screening conditions before interpreting scores.
-            - **REITs Suitability Score** compares assets using latest-year sample-relative indicators.
-            - **Risk Warning** highlights higher relative risk categories without using official thresholds.
-            - **Model Validity** explains reference coverage, reliability checks, and robustness diagnostics.
-            - Always read `data_type` and `source_note`; simulated values are for portfolio demonstration only.
-            """
-        )
+    with st.expander(t("home.how_to_read"), expanded=True):
+        st.markdown(t("home.how_to_read_text"))
 
-    st.caption(f"Current sidebar asset selection: {selected_asset_id}. Page-level views use their own selectors.")
+    st.caption(t("home.current_sidebar_asset", asset_id=selected_asset_id))
 
 
 if __name__ == "__main__":
