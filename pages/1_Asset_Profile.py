@@ -7,7 +7,7 @@ import streamlit as st
 
 from src.data_loader import get_asset_options, get_latest_year_data, load_all_data
 from src.gatekeeper import run_gatekeeper_checks
-from src.i18n import language_selector, t, translate_status
+from src.i18n import language_selector, localize_dataframe, t, translate_column_name, translate_status
 
 
 st.set_page_config(page_title="Asset Profile", layout="wide")
@@ -34,8 +34,7 @@ def render_page_header() -> None:
 
 
 def format_metric_table(df: pd.DataFrame) -> pd.io.formats.style.Styler:
-    return df.style.format(
-        {
+    format_map = {
             "revenue": "{:,.0f}",
             "ebitda": "{:,.0f}",
             "noi": "{:,.0f}",
@@ -54,9 +53,10 @@ def format_metric_table(df: pd.DataFrame) -> pd.io.formats.style.Styler:
             "average_spending_per_visitor": "{:,.0f}",
             "secondary_spending_ratio": "{:.1%}",
             "peak_season_revenue_ratio": "{:.1%}",
-        },
-        na_rep="N/A",
-    )
+    }
+    display_df = localize_dataframe(df)
+    display_format_map = {translate_column_name(column): fmt for column, fmt in format_map.items()}
+    return display_df.style.format(display_format_map, na_rep=t("common.data_unavailable"))
 
 
 def main() -> None:
@@ -121,7 +121,7 @@ def main() -> None:
             display_results = gatekeeper_results.copy()
             display_results["status_badge"] = display_results["status"].map(status_badge)
             st.dataframe(
-                display_results[["condition", "status", "explanation", "reference_logic"]],
+                localize_dataframe(display_results[["condition", "status", "explanation", "reference_logic"]]),
                 use_container_width=True,
                 hide_index=True,
             )
@@ -156,7 +156,7 @@ def main() -> None:
                     "source_note": row.get("source_note", "N/A"),
                 }
             )
-        st.dataframe(pd.DataFrame(note_rows), use_container_width=True, hide_index=True)
+        st.dataframe(localize_dataframe(pd.DataFrame(note_rows)), use_container_width=True, hide_index=True)
 
 
 main()

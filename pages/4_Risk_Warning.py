@@ -5,10 +5,10 @@ from __future__ import annotations
 import pandas as pd
 import streamlit as st
 
-from src.chart_utils import RISK_COLUMNS, RISK_LABELS, make_heatmap_from_risk_scores, make_risk_radar
+from src.chart_utils import RISK_COLUMNS, make_heatmap_from_risk_scores, make_risk_radar
 from src.data_loader import get_asset_options, get_latest_year_data, load_all_data
 from src.gatekeeper import run_gatekeeper_checks
-from src.i18n import language_selector, t
+from src.i18n import language_selector, localize_dataframe, t, translate_column_name, translate_risk_label
 
 
 st.set_page_config(page_title="Risk Warning", layout="wide")
@@ -58,9 +58,9 @@ def main() -> None:
         value = pd.to_numeric(pd.Series([row[column]]), errors="coerce").iloc[0]
         status, _color = relative_risk_status(value, latest_risk[column])
         if status == t("statuses.high_relative_risk"):
-            high_risk_categories.append(RISK_LABELS.get(column, column))
+            high_risk_categories.append(translate_risk_label(column))
         with card_columns[index % 3]:
-            st.metric(RISK_LABELS.get(column, column), f"{value:.2f}" if pd.notna(value) else "N/A")
+            st.metric(translate_risk_label(column), f"{value:.2f}" if pd.notna(value) else t("common.data_unavailable"))
             st.caption(status)
 
     if high_risk_categories:
@@ -84,7 +84,14 @@ def main() -> None:
             st.plotly_chart(make_heatmap_from_risk_scores(data["risk_metrics"]), use_container_width=True)
 
     st.subheader(t("risk.latest_metrics"))
-    st.dataframe(selected_risk.style.format({column: "{:.2f}" for column in available_risks}), use_container_width=True)
+    display_risk = localize_dataframe(selected_risk)
+    st.dataframe(
+        display_risk.style.format(
+            {translate_column_name(column): "{:.2f}" for column in available_risks},
+            na_rep=t("common.data_unavailable"),
+        ),
+        use_container_width=True,
+    )
     st.caption(f"data_type: {row['data_type']} | source_note: {row['source_note']}")
 
     try:
@@ -94,7 +101,7 @@ def main() -> None:
         if warning_rows.empty:
             st.success(t("risk.no_gatekeeper_warnings"))
         else:
-            st.dataframe(warning_rows, use_container_width=True, hide_index=True)
+            st.dataframe(localize_dataframe(warning_rows), use_container_width=True, hide_index=True)
     except Exception as exc:
         st.error(t("risk.warning_error", error=exc))
         if st.checkbox(t("risk.debug_warnings")):

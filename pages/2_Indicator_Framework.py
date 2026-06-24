@@ -7,7 +7,7 @@ import streamlit as st
 import yaml
 
 from src.data_loader import get_project_root
-from src.i18n import language_selector, t
+from src.i18n import language_selector, localize_dataframe, t
 
 
 st.set_page_config(page_title="Indicator Framework", layout="wide")
@@ -89,22 +89,14 @@ def main() -> None:
     ]
     st.subheader(t("indicator.framework_table"))
     st.dataframe(
-        filtered_df[display_columns],
+        localize_dataframe(filtered_df[display_columns]),
         use_container_width=True,
         hide_index=True,
-        column_config={
-            "indicator_id": st.column_config.TextColumn("ID", width="small"),
-            "indicator_name": st.column_config.TextColumn("Indicator", width="medium"),
-            "module": st.column_config.TextColumn("Module", width="medium"),
-            "reference_note": st.column_config.TextColumn("Reference note", width="large"),
-            "validation_method": st.column_config.TextColumn("Validation method", width="large"),
-            "reliability_method": st.column_config.TextColumn("Reliability method", width="large"),
-        },
     )
 
     with st.expander(t("indicator.reference_details"), expanded=False):
         st.dataframe(
-            filtered_df[["indicator_id", "indicator_name", "reference_framework", "reference_note"]],
+            localize_dataframe(filtered_df[["indicator_id", "indicator_name", "reference_framework", "reference_note"]]),
             use_container_width=True,
             hide_index=True,
         )

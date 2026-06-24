@@ -12,7 +12,7 @@ from src.chart_utils import (
     make_score_change_chart,
 )
 from src.data_loader import get_asset_options
-from src.i18n import language_selector, t
+from src.i18n import language_selector, localize_dataframe, t, translate_column_name
 from src.scenario_simulator import run_demo_scenarios, simulate_asset_scenario
 
 
@@ -64,6 +64,11 @@ PRESET_LABEL_KEYS = {
     "Mild Downside": "scenario.mild_downside",
     "Demand Shock": "scenario.demand_shock",
     "Stress Case": "scenario.stress_case",
+}
+SCENARIO_NAME_KEYS = {
+    "mild downside": "scenario.mild_downside",
+    "demand shock": "scenario.demand_shock",
+    "stress case": "scenario.stress_case",
 }
 
 
@@ -119,6 +124,10 @@ def result_to_table(metrics: dict[str, float | None]) -> pd.DataFrame:
     )
 
 
+def translate_scenario_name(value: str) -> str:
+    return t(SCENARIO_NAME_KEYS.get(str(value), ""), str(value))
+
+
 def make_demo_scenario_chart(demo_df: pd.DataFrame):
     if demo_df.empty or "simulated_score" not in demo_df.columns:
         return None
@@ -126,11 +135,12 @@ def make_demo_scenario_chart(demo_df: pd.DataFrame):
     plot_df["simulated_score"] = pd.to_numeric(plot_df["simulated_score"], errors="coerce")
     if plot_df["simulated_score"].dropna().empty:
         return None
+    plot_df["scenario_display"] = plot_df["scenario_name"].map(translate_scenario_name)
     fig = px.bar(
         plot_df,
         x="asset_name",
         y="simulated_score",
-        color="scenario_name",
+        color="scenario_display",
         barmode="group",
         text="simulated_score",
         title=t("scenario.demo_chart_title"),
@@ -309,25 +319,28 @@ def main() -> None:
         [t("scenario.base_metrics"), t("scenario.simulated_metrics"), t("scenario.impact_metrics")]
     )
     with table_tab_1:
+        base_table = localize_dataframe(result_to_table(result["base_metrics"]))
         st.dataframe(
-            result_to_table(result["base_metrics"]).style.format(
-                {"value": "{:,.3f}"},
+            base_table.style.format(
+                {translate_column_name("value"): "{:,.3f}"},
                 na_rep=t("common.data_unavailable"),
             ),
             use_container_width=True,
         )
     with table_tab_2:
+        simulated_table = localize_dataframe(result_to_table(result["simulated_metrics"]))
         st.dataframe(
-            result_to_table(result["simulated_metrics"]).style.format(
-                {"value": "{:,.3f}"},
+            simulated_table.style.format(
+                {translate_column_name("value"): "{:,.3f}"},
                 na_rep=t("common.data_unavailable"),
             ),
             use_container_width=True,
         )
     with table_tab_3:
+        impact_table = localize_dataframe(result_to_table(result["impact_metrics"]))
         st.dataframe(
-            result_to_table(result["impact_metrics"]).style.format(
-                {"value": "{:,.3f}"},
+            impact_table.style.format(
+                {translate_column_name("value"): "{:,.3f}"},
                 na_rep=t("common.data_unavailable"),
             ),
             use_container_width=True,
@@ -338,14 +351,17 @@ def main() -> None:
     st.caption(t("scenario.demo_caption"))
     try:
         demo_df = run_demo_scenarios()
+        display_demo_df = demo_df.copy()
+        display_demo_df["scenario_name"] = display_demo_df["scenario_name"].map(translate_scenario_name)
+        display_demo_df = localize_dataframe(display_demo_df)
         st.dataframe(
-            demo_df.style.format(
+            display_demo_df.style.format(
                 {
-                    "base_score": "{:.1f}",
-                    "simulated_score": "{:.1f}",
-                    "score_change": "{:.1f}",
-                    "base_distribution_coverage": "{:.2f}",
-                    "simulated_distribution_coverage": "{:.2f}",
+                    translate_column_name("base_score"): "{:.1f}",
+                    translate_column_name("simulated_score"): "{:.1f}",
+                    translate_column_name("score_change"): "{:.1f}",
+                    translate_column_name("base_distribution_coverage"): "{:.2f}",
+                    translate_column_name("simulated_distribution_coverage"): "{:.2f}",
                 },
                 na_rep=t("common.data_unavailable"),
             ),

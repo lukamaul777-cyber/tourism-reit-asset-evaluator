@@ -8,7 +8,7 @@ import streamlit as st
 from src.chart_utils import make_score_bar_chart
 from src.data_loader import get_asset_options, load_all_data
 from src.gatekeeper import run_gatekeeper_checks
-from src.i18n import language_selector, t
+from src.i18n import language_selector, localize_dataframe, t, translate_column_name
 from src.scoring_model import ENTROPY_PLACEHOLDER_MESSAGE, run_scoring_pipeline
 
 
@@ -16,6 +16,9 @@ st.set_page_config(
     page_title="Tourism REIT Asset Evaluator",
     layout="wide",
 )
+
+# Streamlit's default multipage navigation is filename-driven in this app.
+# Page content headings and controls are localized; custom navigation can be added later if needed.
 
 
 def render_page_header(title: str, subtitle: str) -> None:
@@ -50,10 +53,10 @@ def render_methodology_flow() -> None:
     st.subheader(t("home.methodology_flow"))
     columns = st.columns(4)
     steps = [
-        ("1", t("home.flow_gatekeeper_title"), t("home.flow_gatekeeper_text")),
-        ("2", t("home.flow_scoring_title"), t("home.flow_scoring_text")),
-        ("3", t("home.flow_risk_title"), t("home.flow_risk_text")),
-        ("4", t("home.flow_validity_title"), t("home.flow_validity_text")),
+        ("1", t("methodology.gatekeeper"), t("home.flow_gatekeeper_text")),
+        ("2", t("methodology.scoring"), t("home.flow_scoring_text")),
+        ("3", t("methodology.risk_warning"), t("home.flow_risk_text")),
+        ("4", t("methodology.model_validity"), t("home.flow_validity_text")),
     ]
     for column, (number, title, text) in zip(columns, steps):
         with column:
@@ -128,15 +131,16 @@ def main() -> None:
         "rating_level",
     ]
     score_table = total_scores_df[display_columns].copy()
+    display_score_table = localize_dataframe(score_table)
     st.dataframe(
-        score_table.style.format(
+        display_score_table.style.format(
             {
-                "a_module_score": "{:.1f}",
-                "b_module_score": "{:.1f}",
-                "c_module_score": "{:.1f}",
-                "d_module_score": "{:.1f}",
-                "e_module_score": "{:.1f}",
-                "total_score": "{:.1f}",
+                translate_column_name("a_module_score"): "{:.1f}",
+                translate_column_name("b_module_score"): "{:.1f}",
+                translate_column_name("c_module_score"): "{:.1f}",
+                translate_column_name("d_module_score"): "{:.1f}",
+                translate_column_name("e_module_score"): "{:.1f}",
+                translate_column_name("total_score"): "{:.1f}",
             }
         ),
         use_container_width=True,

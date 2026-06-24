@@ -7,7 +7,14 @@ import streamlit as st
 
 from src.chart_utils import make_indicator_bar_chart, make_module_score_radar
 from src.data_loader import get_asset_options
-from src.i18n import language_selector, t, translate_rating
+from src.i18n import (
+    language_selector,
+    localize_dataframe,
+    t,
+    translate_column_name,
+    translate_module_name,
+    translate_rating,
+)
 from src.scoring_model import ENTROPY_PLACEHOLDER_MESSAGE, run_scoring_pipeline
 
 
@@ -62,8 +69,8 @@ def main() -> None:
     else:
         strongest = valid_modules.loc[valid_modules["module_score"].idxmax()]
         weakest = valid_modules.loc[valid_modules["module_score"].idxmin()]
-        strongest_module = f"{strongest['module']} ({strongest['module_score']:.1f})"
-        weakest_module = f"{weakest['module']} ({weakest['module_score']:.1f})"
+        strongest_module = f"{translate_module_name(strongest['module'])} ({strongest['module_score']:.1f})"
+        weakest_module = f"{translate_module_name(weakest['module'])} ({weakest['module_score']:.1f})"
 
     missing_indicator_count = int(selected_modules["missing_indicator_count"].sum())
 
@@ -92,8 +99,12 @@ def main() -> None:
             st.plotly_chart(make_indicator_bar_chart(indicator_scores_df, asset_id), use_container_width=True)
 
     st.subheader(t("score.module_table"))
+    display_modules = localize_dataframe(selected_modules)
     st.dataframe(
-        selected_modules.style.format({"module_score": "{:.1f}"}, na_rep="N/A"),
+        display_modules.style.format(
+            {translate_column_name("module_score"): "{:.1f}"},
+            na_rep=t("common.data_unavailable"),
+        ),
         use_container_width=True,
         hide_index=True,
     )
@@ -112,8 +123,15 @@ def main() -> None:
             "explanation",
         ]
     ]
+    display_indicators = localize_dataframe(display_indicators)
     st.dataframe(
-        display_indicators.style.format({"raw_value": "{:.3f}", "indicator_score": "{:.1f}"}, na_rep="N/A"),
+        display_indicators.style.format(
+            {
+                translate_column_name("raw_value"): "{:.3f}",
+                translate_column_name("indicator_score"): "{:.1f}",
+            },
+            na_rep=t("common.data_unavailable"),
+        ),
         use_container_width=True,
         hide_index=True,
     )

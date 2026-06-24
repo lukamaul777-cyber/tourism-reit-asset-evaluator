@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import streamlit as st
 
-from src.i18n import language_selector, t
+from src.i18n import language_selector, localize_dataframe, t
 from src.reliability_validity import generate_validity_report, run_model_validity_pipeline
 
 
@@ -54,7 +54,7 @@ def main() -> None:
         col2.metric(t("labels.module_count"), content_table["module"].nunique())
         col3.metric(t("labels.required_indicators"), int(content_table["whether_it_is_required"].sum()))
         st.write(t("validity.content_validity_text"))
-        st.dataframe(content_table, use_container_width=True, hide_index=True)
+        st.dataframe(localize_dataframe(content_table), use_container_width=True, hide_index=True)
 
     with reliability_tab:
         st.subheader(t("validity.reliability"))
