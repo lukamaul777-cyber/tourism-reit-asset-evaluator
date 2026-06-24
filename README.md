@@ -2,6 +2,10 @@
 
 文旅消费基础设施 REITs 底层资产评估与风险预警平台
 
+**Live Demo:** https://tourism-reit-asset-evaluator-slsuamhgrgxskvdnoyns3a.streamlit.app/
+
+**GitHub Repository:** https://github.com/lukamaul777-cyber/tourism-reit-asset-evaluator
+
 ## Project Overview
 
 Tourism REIT Asset Evaluator is a Streamlit-based data product for evaluating the REITs suitability and risk profile of tourism-related consumption infrastructure assets, including scenic areas, resort complexes, and hotel assets.
@@ -82,51 +86,55 @@ Demo data should not be interpreted as official disclosed data. Model outputs ar
 
 ```text
 tourism-reit-asset-evaluator/
-├── app.py
-├── config/
-│   ├── indicator_framework.yml
-│   ├── model_references.yml
-│   └── scoring_weights.yml
-├── data/
-│   ├── assets.csv
-│   ├── financial_metrics.csv
-│   ├── operation_metrics.csv
-│   ├── service_quality_metrics.csv
-│   ├── risk_metrics.csv
-│   ├── digital_maturity_metrics.csv
-│   └── data_dictionary.csv
-├── docs/
-│   ├── data_notes.md
-│   ├── indicator_system.md
-│   ├── model_methodology.md
-│   ├── references.md
-│   └── screenshots/
-├── pages/
-│   ├── 1_Asset_Profile.py
-│   ├── 2_Indicator_Framework.py
-│   ├── 3_REIT_Fit_Score.py
-│   ├── 4_Risk_Warning.py
-│   ├── 5_Model_Validity.py
-│   ├── 6_Scenario_Simulator.py
-│   └── 7_Report_Generator.py
-├── reports/
-│   ├── report_A001.md
-│   ├── report_A002.md
-│   └── report_A003.md
-├── scripts/
-│   ├── run_model_validity_checks.py
-│   ├── validate_data_files.py
-│   └── validate_project_config.py
-├── src/
-│   ├── chart_utils.py
-│   ├── data_loader.py
-│   ├── gatekeeper.py
-│   ├── reliability_validity.py
-│   ├── report_generator.py
-│   ├── scenario_simulator.py
-│   └── scoring_model.py
-├── requirements.txt
-└── README.md
+|-- app.py
+|-- config/
+|   |-- indicator_framework.yml
+|   |-- model_references.yml
+|   `-- scoring_weights.yml
+|-- data/
+|   |-- assets.csv
+|   |-- financial_metrics.csv
+|   |-- operation_metrics.csv
+|   |-- service_quality_metrics.csv
+|   |-- risk_metrics.csv
+|   |-- digital_maturity_metrics.csv
+|   `-- data_dictionary.csv
+|-- docs/
+|   |-- data_notes.md
+|   |-- github_about.md
+|   |-- indicator_system.md
+|   |-- model_methodology.md
+|   |-- portfolio_summary.md
+|   |-- references.md
+|   `-- screenshots/
+|-- pages/
+|   |-- 1_Asset_Profile.py
+|   |-- 2_Indicator_Framework.py
+|   |-- 3_REIT_Fit_Score.py
+|   |-- 4_Risk_Warning.py
+|   |-- 5_Model_Validity.py
+|   |-- 6_Scenario_Simulator.py
+|   `-- 7_Report_Generator.py
+|-- reports/
+|   |-- report_A001.md
+|   |-- report_A002.md
+|   `-- report_A003.md
+|-- scripts/
+|   |-- final_check.py
+|   |-- run_model_validity_checks.py
+|   |-- validate_data_files.py
+|   `-- validate_project_config.py
+|-- src/
+|   |-- chart_utils.py
+|   |-- data_loader.py
+|   |-- gatekeeper.py
+|   |-- reliability_validity.py
+|   |-- report_generator.py
+|   |-- scenario_simulator.py
+|   `-- scoring_model.py
+|-- LICENSE
+|-- requirements.txt
+`-- README.md
 ```
 
 ## How to Run
@@ -159,6 +167,7 @@ python -m streamlit run app.py
 
 This app is deployment-ready for Streamlit Community Cloud from a GitHub repository.
 
+- Live Streamlit App: https://tourism-reit-asset-evaluator-slsuamhgrgxskvdnoyns3a.streamlit.app/
 - Main file path: `app.py`
 - Dependencies are listed in `requirements.txt`.
 - Recommended local run command: `python -m streamlit run app.py`
@@ -205,7 +214,7 @@ Rule-based generated report preview with Markdown/TXT download options.
 - Add a larger tourism asset peer group.
 - Implement entropy weighting with a larger verified dataset.
 - Add PDF and Word report export.
-- Add a deployed demo link.
+- Add richer deployment documentation and user testing notes.
 
 ## Author / Role
 
