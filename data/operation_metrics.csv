@@ -1,0 +1,7 @@
+asset_id,year,visitor_volume,occupancy_rate,adr,revpar,average_spending_per_visitor,secondary_spending_ratio,peak_season_revenue_ratio,data_type,source_note
+A_HUANGSHAN,2023,3250000,0.72,0,0,420,0.28,0.43,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_HUANGSHAN,2024,3520000,0.75,0,0,440,0.30,0.41,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_TIANMU,2023,2100000,0.68,0,0,360,0.33,0.46,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_TIANMU,2024,2260000,0.70,0,0,378,0.35,0.44,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_BTG_HOTELS,2023,0,0.64,430,275,0,0.18,0.34,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_BTG_HOTELS,2024,0,0.67,455,305,0,0.19,0.33,simulated,Demo value for portfolio prototype; not official disclosed data.

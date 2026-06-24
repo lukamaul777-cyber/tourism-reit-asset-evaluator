@@ -1,0 +1,7 @@
+asset_id,year,seasonality_risk,market_competition_risk,policy_risk,climate_physical_risk,financial_pressure_risk,platform_dependency_risk,risk_disclosure_score,data_type,source_note
+A_HUANGSHAN,2023,0.42,0.30,0.25,0.36,0.28,0.22,72,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_HUANGSHAN,2024,0.40,0.31,0.24,0.35,0.27,0.21,75,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_TIANMU,2023,0.46,0.34,0.27,0.32,0.26,0.24,69,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_TIANMU,2024,0.44,0.33,0.26,0.31,0.25,0.23,72,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_BTG_HOTELS,2023,0.34,0.48,0.29,0.24,0.38,0.36,66,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_BTG_HOTELS,2024,0.33,0.47,0.28,0.24,0.36,0.35,69,simulated,Demo value for portfolio prototype; not official disclosed data.

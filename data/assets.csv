@@ -1,0 +1,4 @@
+asset_id,asset_name,asset_type,location,description,ownership_status,operation_years,has_major_legal_dispute,cash_flow_source_type,data_type,source_note
+A_HUANGSHAN,Huangshan Tourism,Scenic area,Anhui China,Portfolio prototype example for mountain scenic tourism asset,operation_right_clear,10,false,market_based,mixed,Demo value for portfolio prototype; not official disclosed data.
+A_TIANMU,Tianmu Lake,Scenic resort,Jiangsu China,Portfolio prototype example for lake resort and leisure tourism asset,operation_right_clear,10,false,mostly_market_based,mixed,Demo value for portfolio prototype; not official disclosed data.
+A_BTG_HOTELS,BTG Hotels,Hotel portfolio,China,Portfolio prototype example for hotel operating asset,operation_right_clear,10,false,market_based,mixed,Demo value for portfolio prototype; not official disclosed data.

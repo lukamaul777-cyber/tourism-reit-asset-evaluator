@@ -1,0 +1,7 @@
+asset_id,year,data_availability_score,data_quality_score,smart_operation_score,online_reservation_score,visitor_flow_monitoring_score,public_opinion_monitoring_score,dashboard_monitoring_score,data_type,source_note
+A_HUANGSHAN,2023,68,65,72,78,74,66,62,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_HUANGSHAN,2024,72,69,76,82,78,70,66,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_TIANMU,2023,64,62,70,75,68,63,58,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_TIANMU,2024,68,66,73,78,72,67,62,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_BTG_HOTELS,2023,74,70,76,84,58,72,68,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_BTG_HOTELS,2024,78,74,80,87,61,76,72,simulated,Demo value for portfolio prototype; not official disclosed data.

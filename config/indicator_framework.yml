@@ -1,0 +1,215 @@
+framework_name: Tourism REIT Asset Evaluator Indicator Framework
+version: 0.1.0
+description: >
+  Transparent indicator framework for assessing the REITs suitability and risk
+  profile of tourism-related consumption infrastructure assets.
+evaluation_layers:
+  - layer: regulatory_gatekeeper
+    description: Binary eligibility and red-flag checks applied before scoring.
+  - layer: scoring_model
+    description: 100-point scoring model applied only after gatekeeper review.
+indicators:
+  - indicator_id: A1
+    indicator_name: Net Operating Cash Flow Stability
+    module: A. REITs Cash Flow and Distribution Capacity
+    definition: Stability of recurring operating cash flow over the historical review period.
+    formula: "1 - coefficient_of_variation(annual_net_operating_cash_flow)"
+    direction: positive
+    data_source_type: public_disclosure
+    reference_framework: CSRC public infrastructure REITs guidelines; NDRC infrastructure REITs project application requirements
+    reference_note: Infrastructure REITs assets should show stable operation and cash flow support.
+    validation_method: Reconcile disclosed cash flow figures to audited financial statements and operating reports.
+    reliability_method: Year-over-year consistency checks and sensitivity analysis using alternative historical windows.
+    whether_it_is_required: true
+  - indicator_id: A2
+    indicator_name: Distributable Cash Flow Coverage
+    module: A. REITs Cash Flow and Distribution Capacity
+    definition: Ability of operating cash flow to support expected distributable cash flow.
+    formula: "net_operating_cash_flow / expected_distributable_cash_flow"
+    direction: positive
+    data_source_type: public_disclosure
+    reference_framework: CSRC public infrastructure REITs guidelines; NAREIT FFO/AFFO concept; EPRA Best Practices Recommendations
+    reference_note: Distribution capacity should be evaluated using recurring cash-flow measures rather than accounting profit alone.
+    validation_method: Compare issuer disclosure, FFO/AFFO-style adjustments, and cash flow statement inputs.
+    reliability_method: Scenario testing under occupancy, ticket price, RevPAR, and operating-cost assumptions.
+    whether_it_is_required: true
+  - indicator_id: A3
+    indicator_name: Revenue Marketization Ratio
+    module: A. REITs Cash Flow and Distribution Capacity
+    definition: Share of revenue generated from market-based customer payments rather than non-recurring subsidies.
+    formula: "market_based_operating_revenue / total_operating_revenue"
+    direction: positive
+    data_source_type: public_disclosure
+    reference_framework: CSRC public infrastructure REITs guidelines; NDRC infrastructure REITs project application requirements
+    reference_note: REITs cash flow should mainly come from stable market-based operating sources.
+    validation_method: Classify revenue by contract, ticketing, lodging, lease, concession, and subsidy source.
+    reliability_method: Cross-check disclosed revenue categories against management accounts and public filings.
+    whether_it_is_required: true
+  - indicator_id: A4
+    indicator_name: DCF Valuation Support
+    module: A. REITs Cash Flow and Distribution Capacity
+    definition: Degree to which appraised value is supported by transparent discounted cash flow assumptions.
+    formula: "manual_score_based_on_dcf_transparency_and_assumption_reasonableness"
+    direction: positive
+    data_source_type: manual_assessment
+    reference_framework: RICS DCF valuation guidance; INREV Performance Measurement Guidelines
+    reference_note: DCF models should disclose assumptions, forecast logic, discount rates, and sensitivity ranges.
+    validation_method: Review valuation report assumptions against market evidence and historical operating data.
+    reliability_method: Independent reviewer scoring and sensitivity analysis on discount rate and terminal assumptions.
+    whether_it_is_required: false
+  - indicator_id: B1
+    indicator_name: Visitor or Guest Volume Stability
+    module: B. Tourism Operating Quality
+    definition: Stability of visitor arrivals, room nights, or equivalent demand units over the review period.
+    formula: "1 - coefficient_of_variation(annual_visitor_or_guest_volume)"
+    direction: positive
+    data_source_type: public_disclosure
+    reference_framework: UN Tourism accommodation statistics; smart tourism attraction construction or management guidelines
+    reference_note: Tourism operating quality depends on resilient and measurable demand.
+    validation_method: Reconcile visitor counts, ticketing records, hotel PMS records, and disclosed operating statistics.
+    reliability_method: Outlier review for holiday effects, weather shocks, closures, and reporting-method changes.
+    whether_it_is_required: true
+  - indicator_id: B2
+    indicator_name: Occupancy or Utilization Rate
+    module: B. Tourism Operating Quality
+    definition: Utilization of available tourism capacity such as rooms, park capacity, or leasable tourism facilities.
+    formula: "occupied_units_or_visits / available_capacity"
+    direction: positive
+    data_source_type: public_disclosure
+    reference_framework: UN Tourism accommodation statistics; INREV Performance Measurement Guidelines
+    reference_note: Utilization is a core operating metric for accommodation and tourism infrastructure.
+    validation_method: Compare disclosed utilization with operating system exports and peer benchmarks.
+    reliability_method: Period-over-period consistency checks and missing-data review.
+    whether_it_is_required: false
+  - indicator_id: B3
+    indicator_name: Revenue per Visitor or Available Room
+    module: B. Tourism Operating Quality
+    definition: Revenue productivity of tourism demand, measured using RevPAR, spend per visitor, or equivalent metric.
+    formula: "tourism_operating_revenue / visitor_or_available_capacity_base"
+    direction: positive
+    data_source_type: public_disclosure
+    reference_framework: UN Tourism accommodation statistics; EPRA Best Practices Recommendations
+    reference_note: Revenue productivity links operating quality to asset cash-flow capacity.
+    validation_method: Reconcile revenue and demand denominators to the same reporting period and asset boundary.
+    reliability_method: Peer range checks and trend stability analysis.
+    whether_it_is_required: false
+  - indicator_id: B4
+    indicator_name: Seasonality Concentration
+    module: B. Tourism Operating Quality
+    definition: Dependence on peak seasons or holidays for annual demand and revenue.
+    formula: "peak_quarter_revenue / annual_operating_revenue"
+    direction: negative
+    data_source_type: public_disclosure
+    reference_framework: UN Tourism accommodation statistics; ISO 31000 risk management
+    reference_note: High seasonality can increase cash-flow volatility and operating risk.
+    validation_method: Compare monthly or quarterly demand and revenue distributions.
+    reliability_method: Multi-year concentration analysis and scenario testing for peak-period disruption.
+    whether_it_is_required: false
+  - indicator_id: C1
+    indicator_name: Online Reputation Score
+    module: C. Service Quality and Online Reputation
+    definition: Weighted average customer rating across major travel, map, OTA, and review platforms.
+    formula: "weighted_average(platform_rating, weight = review_count)"
+    direction: positive
+    data_source_type: public_collected
+    reference_framework: SERVQUAL; HOLSERV; DINESERV
+    reference_note: Customer-perceived service quality is observable through structured ratings and text reviews.
+    validation_method: Deduplicate platforms, normalize rating scales, and document collection date.
+    reliability_method: Spearman rank stability across platforms and sampling periods.
+    whether_it_is_required: false
+  - indicator_id: C2
+    indicator_name: Complaint Incidence Rate
+    module: C. Service Quality and Online Reputation
+    definition: Frequency of material complaints relative to visitor or guest volume.
+    formula: "material_complaints / visitor_or_guest_volume"
+    direction: negative
+    data_source_type: public_collected
+    reference_framework: SERVQUAL; HOLSERV; DINESERV
+    reference_note: Complaint rates complement satisfaction scores by identifying service failure risk.
+    validation_method: Classify complaints by severity, source, and period; remove duplicates where possible.
+    reliability_method: Inter-rater agreement for complaint classification and trend consistency checks.
+    whether_it_is_required: false
+  - indicator_id: C3
+    indicator_name: Survey-Based Service Quality Score
+    module: C. Service Quality and Online Reputation
+    definition: Customer survey score covering tangibles, reliability, responsiveness, assurance, and empathy.
+    formula: "average_likert_score_across_valid_service_quality_items"
+    direction: positive
+    data_source_type: survey
+    reference_framework: SERVQUAL; HOLSERV; DINESERV
+    reference_note: Survey-scale service quality should be tested for internal consistency before model use.
+    validation_method: Review questionnaire design, sample frame, response quality, and missing values.
+    reliability_method: Cronbach's alpha and factor-structure review where sample size is sufficient.
+    whether_it_is_required: false
+  - indicator_id: D1
+    indicator_name: Legal and Compliance Risk Score
+    module: D. Risk Management and Resilience
+    definition: Assessment of legal disputes, compliance events, title issues, and material operating restrictions.
+    formula: "manual_score_based_on_legal_compliance_due_diligence"
+    direction: positive
+    data_source_type: manual_assessment
+    reference_framework: CSRC public infrastructure REITs guidelines; NDRC infrastructure REITs project application requirements; COSO ERM
+    reference_note: Material legal or compliance issues may affect eligibility and continuous operation.
+    validation_method: Review legal opinions, public litigation records, regulatory penalties, and title documents.
+    reliability_method: Independent reviewer confirmation and red-flag checklist consistency.
+    whether_it_is_required: true
+  - indicator_id: D2
+    indicator_name: Business Continuity and Operational Resilience
+    module: D. Risk Management and Resilience
+    definition: Preparedness for operational interruptions, safety events, climate shocks, and demand disruptions.
+    formula: "manual_score_based_on_resilience_policy_testing_and_historical_incidents"
+    direction: positive
+    data_source_type: manual_assessment
+    reference_framework: ISO 31000 risk management; COSO ERM; TCFD recommendations; IFRS S2 climate-related disclosures
+    reference_note: Tourism assets should identify, manage, and disclose material operational and climate-related risks.
+    validation_method: Review risk registers, emergency plans, insurance coverage, incident history, and climate exposure.
+    reliability_method: Scenario analysis and independent risk-control maturity review.
+    whether_it_is_required: false
+  - indicator_id: D3
+    indicator_name: Subsidy Dependence Risk
+    module: D. Risk Management and Resilience
+    definition: Exposure to non-recurring subsidies or policy support that may not continue.
+    formula: "non_recurring_subsidies / total_operating_cash_inflow"
+    direction: negative
+    data_source_type: public_disclosure
+    reference_framework: CSRC public infrastructure REITs guidelines; NDRC infrastructure REITs project application requirements
+    reference_note: Heavy dependence on non-recurring subsidies weakens recurring cash-flow quality.
+    validation_method: Separate recurring operating revenue from one-off fiscal support and special grants.
+    reliability_method: Multi-year review of subsidy source, frequency, and contractual basis.
+    whether_it_is_required: true
+  - indicator_id: E1
+    indicator_name: Data Governance Maturity
+    module: E. Data Maturity and Smart Operation
+    definition: Maturity of data ownership, standards, quality control, security, and lifecycle management.
+    formula: "manual_score_mapped_to_dcmm_maturity_dimensions"
+    direction: positive
+    data_source_type: manual_assessment
+    reference_framework: GB/T 36073 DCMM data management capability maturity model
+    reference_note: Reliable asset evaluation requires traceable and governed operating data.
+    validation_method: Review data dictionaries, system ownership, access controls, lineage, and quality controls.
+    reliability_method: Independent maturity scoring and evidence checklist completion rate.
+    whether_it_is_required: false
+  - indicator_id: E2
+    indicator_name: Smart Operation Coverage
+    module: E. Data Maturity and Smart Operation
+    definition: Coverage of digital systems for ticketing, reservations, POS, CRM, PMS, IoT, crowd control, and operations.
+    formula: "covered_core_system_functions / total_relevant_core_system_functions"
+    direction: positive
+    data_source_type: manual_assessment
+    reference_framework: smart tourism attraction construction or management guidelines; GB/T 36073 DCMM data management capability maturity model
+    reference_note: Smart operation systems improve data availability, service quality, and operating resilience.
+    validation_method: Inventory systems, logs, integrations, reporting frequency, and operational use cases.
+    reliability_method: System evidence review and repeated scoring by different reviewers.
+    whether_it_is_required: false
+  - indicator_id: E3
+    indicator_name: Automated Data Availability
+    module: E. Data Maturity and Smart Operation
+    definition: Share of required model inputs that can be sourced from automated systems rather than manual collection.
+    formula: "automated_model_input_count / total_model_input_count"
+    direction: positive
+    data_source_type: manual_assessment
+    reference_framework: GB/T 36073 DCMM data management capability maturity model; EPRA Best Practices Recommendations
+    reference_note: Automated data availability improves repeatability, auditability, and update frequency.
+    validation_method: Map each indicator input to source system, owner, refresh frequency, and extraction method.
+    reliability_method: Data completeness testing and reconciliation against public disclosures.
+    whether_it_is_required: false

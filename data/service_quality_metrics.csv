@@ -1,0 +1,7 @@
+asset_id,year,ota_score,review_count,tangibles_score,reliability_score,responsiveness_score,assurance_score,empathy_score,complaint_rate,data_type,source_note
+A_HUANGSHAN,2023,4.55,18000,4.40,4.35,4.30,4.45,4.28,0.004,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_HUANGSHAN,2024,4.60,22000,4.48,4.43,4.38,4.50,4.36,0.003,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_TIANMU,2023,4.48,9500,4.35,4.30,4.22,4.38,4.25,0.005,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_TIANMU,2024,4.52,11200,4.40,4.36,4.30,4.42,4.31,0.004,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_BTG_HOTELS,2023,4.32,76000,4.20,4.18,4.12,4.25,4.10,0.007,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_BTG_HOTELS,2024,4.38,83500,4.28,4.25,4.20,4.31,4.18,0.006,simulated,Demo value for portfolio prototype; not official disclosed data.

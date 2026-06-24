@@ -1,0 +1,7 @@
+asset_id,year,revenue,ebitda,noi,operating_cash_flow,maintenance_capex,estimated_affo,estimated_distribution,total_assets,total_debt,debt_ratio,capex_to_ocf,data_type,source_note
+A_HUANGSHAN,2023,1850,620,540,500,80,420,360,6200,1550,0.25,0.16,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_HUANGSHAN,2024,2010,690,600,555,85,470,400,6500,1580,0.24,0.15,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_TIANMU,2023,1120,365,310,285,45,240,205,3900,920,0.24,0.16,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_TIANMU,2024,1235,410,350,325,50,275,235,4100,940,0.23,0.15,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_BTG_HOTELS,2023,7800,1280,980,900,210,690,585,18200,6100,0.34,0.23,simulated,Demo value for portfolio prototype; not official disclosed data.
+A_BTG_HOTELS,2024,8420,1425,1110,1010,230,780,665,18900,6200,0.33,0.23,simulated,Demo value for portfolio prototype; not official disclosed data.

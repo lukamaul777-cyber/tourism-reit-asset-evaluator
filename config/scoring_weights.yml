@@ -1,0 +1,107 @@
+framework_name: Tourism REIT Asset Evaluator Scoring Weights
+version: 0.1.0
+weighting_modes:
+  default_expert_weight:
+    description: Expert-weighted 100-point model reflecting REITs cash-flow priority and tourism operating risk.
+    modules:
+      A. REITs Cash Flow and Distribution Capacity:
+        weight: 30
+        indicators:
+          A1: 8
+          A2: 9
+          A3: 8
+          A4: 5
+      B. Tourism Operating Quality:
+        weight: 25
+        indicators:
+          B1: 7
+          B2: 6
+          B3: 7
+          B4: 5
+      C. Service Quality and Online Reputation:
+        weight: 15
+        indicators:
+          C1: 6
+          C2: 4
+          C3: 5
+      D. Risk Management and Resilience:
+        weight: 15
+        indicators:
+          D1: 6
+          D2: 5
+          D3: 4
+      E. Data Maturity and Smart Operation:
+        weight: 15
+        indicators:
+          E1: 5
+          E2: 5
+          E3: 5
+  equal_weight:
+    description: Equal module weighting with equal indicator weights inside each module.
+    modules:
+      A. REITs Cash Flow and Distribution Capacity:
+        weight: 20
+        indicators:
+          A1: 5
+          A2: 5
+          A3: 5
+          A4: 5
+      B. Tourism Operating Quality:
+        weight: 20
+        indicators:
+          B1: 5
+          B2: 5
+          B3: 5
+          B4: 5
+      C. Service Quality and Online Reputation:
+        weight: 20
+        indicators:
+          C1: 6.6667
+          C2: 6.6667
+          C3: 6.6666
+      D. Risk Management and Resilience:
+        weight: 20
+        indicators:
+          D1: 6.6667
+          D2: 6.6667
+          D3: 6.6666
+      E. Data Maturity and Smart Operation:
+        weight: 20
+        indicators:
+          E1: 6.6667
+          E2: 6.6667
+          E3: 6.6666
+  entropy_weight_placeholder:
+    description: >
+      Placeholder for data-driven entropy weights. Use only after a sufficiently
+      large and comparable sample is available. Store calculated weights with
+      dataset date, sample size, treatment of missing values, and reproducibility notes.
+    status: not_calculated
+    required_before_use:
+      - comparable_asset_sample
+      - documented_normalization_method
+      - missing_value_policy
+      - entropy_calculation_script_or_notebook
+      - sensitivity_comparison_against_default_expert_weight
+    modules: {}
+rating_levels:
+  - rating: Highly Suitable
+    min_score: 85
+    max_score: 100
+    interpretation: Strong REITs suitability, subject to passing gatekeeper checks and due diligence.
+  - rating: Suitable with Monitoring
+    min_score: 70
+    max_score: 84.9999
+    interpretation: Generally suitable profile with manageable weaknesses.
+  - rating: Conditional Suitability
+    min_score: 55
+    max_score: 69.9999
+    interpretation: Potentially suitable but requires targeted risk mitigation or data improvement.
+  - rating: Weak Suitability
+    min_score: 40
+    max_score: 54.9999
+    interpretation: Material weaknesses for REITs suitability or cash-flow resilience.
+  - rating: Not Suitable
+    min_score: 0
+    max_score: 39.9999
+    interpretation: Low scoring-model suitability in the current peer sample.

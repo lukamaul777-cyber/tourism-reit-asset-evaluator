@@ -1,0 +1,137 @@
+framework_name: Tourism REIT Asset Evaluator Reference Library
+version: 0.1.0
+references:
+  - reference_id: REF_Csrc_REITs
+    name: CSRC public infrastructure REITs guidelines
+    type: regulation
+    jurisdiction_or_scope: China
+    relevance: Eligibility, asset compliance, cash-flow quality, and disclosure expectations for public infrastructure REITs.
+    used_for:
+      - regulatory_gatekeeper
+      - cash_flow_distribution_capacity
+      - legal_compliance_risk
+  - reference_id: REF_NDRC_REITs
+    name: NDRC infrastructure REITs project application requirements
+    type: regulation
+    jurisdiction_or_scope: China
+    relevance: Project application requirements including asset maturity, operation, compliance, and cash-flow stability.
+    used_for:
+      - regulatory_gatekeeper
+      - cash_flow_distribution_capacity
+      - subsidy_dependence_review
+  - reference_id: REF_NAREIT_FFO_AFFO
+    name: NAREIT FFO/AFFO concept
+    type: industry_practice
+    jurisdiction_or_scope: Listed REIT industry
+    relevance: Recurring performance and distribution-capacity concepts for REITs analysis.
+    used_for:
+      - distributable_cash_flow
+      - recurring_cash_flow_adjustments
+  - reference_id: REF_EPRA_BPR
+    name: EPRA Best Practices Recommendations
+    type: industry_practice
+    jurisdiction_or_scope: European listed real estate
+    relevance: Performance reporting and comparability practices for listed real estate vehicles.
+    used_for:
+      - performance_metrics
+      - disclosure_quality
+      - recurring_earnings_review
+  - reference_id: REF_INREV_PM
+    name: INREV Performance Measurement Guidelines
+    type: industry_practice
+    jurisdiction_or_scope: Non-listed real estate investment
+    relevance: Performance measurement concepts for real estate vehicles and asset-level reporting.
+    used_for:
+      - asset_performance_measurement
+      - valuation_and_return_context
+  - reference_id: REF_RICS_DCF
+    name: RICS DCF valuation guidance
+    type: professional_standard
+    jurisdiction_or_scope: Real estate valuation
+    relevance: Discounted cash flow valuation transparency, assumptions, sensitivity, and professional review.
+    used_for:
+      - dcf_valuation_support
+      - valuation_assumption_review
+  - reference_id: REF_UN_TOURISM_STATS
+    name: UN Tourism accommodation statistics
+    type: statistical_guidance
+    jurisdiction_or_scope: Tourism and accommodation statistics
+    relevance: Demand, occupancy, accommodation capacity, and tourism operating metrics.
+    used_for:
+      - visitor_volume
+      - occupancy
+      - tourism_operating_quality
+  - reference_id: REF_SERVQUAL
+    name: SERVQUAL
+    type: academic_framework
+    jurisdiction_or_scope: Service quality measurement
+    relevance: Customer-perceived service quality dimensions including tangibles, reliability, responsiveness, assurance, and empathy.
+    used_for:
+      - survey_service_quality
+      - customer_experience_measurement
+  - reference_id: REF_HOLSERV
+    name: HOLSERV
+    type: academic_framework
+    jurisdiction_or_scope: Hospitality service quality
+    relevance: Hospitality-adapted service quality measurement.
+    used_for:
+      - hotel_asset_service_quality
+      - customer_satisfaction_surveys
+  - reference_id: REF_DINESERV
+    name: DINESERV
+    type: academic_framework
+    jurisdiction_or_scope: Restaurant and food-service quality
+    relevance: Food and beverage service quality for resort and tourism complexes with dining operations.
+    used_for:
+      - dining_service_quality
+      - resort_service_quality
+  - reference_id: REF_ISO_31000
+    name: ISO 31000 risk management
+    type: standard
+    jurisdiction_or_scope: Enterprise risk management
+    relevance: Risk identification, assessment, treatment, monitoring, and communication principles.
+    used_for:
+      - risk_management_resilience
+      - scenario_analysis
+  - reference_id: REF_COSO_ERM
+    name: COSO ERM
+    type: framework
+    jurisdiction_or_scope: Enterprise risk management
+    relevance: Governance, strategy, performance, review, and information flows for enterprise risk management.
+    used_for:
+      - risk_governance
+      - internal_control_review
+  - reference_id: REF_TCFD
+    name: TCFD recommendations
+    type: disclosure_framework
+    jurisdiction_or_scope: Climate-related financial disclosure
+    relevance: Governance, strategy, risk management, metrics, and targets for climate-related risks.
+    used_for:
+      - climate_risk_review
+      - resilience_assessment
+  - reference_id: REF_IFRS_S2
+    name: IFRS S2 climate-related disclosures
+    type: disclosure_standard
+    jurisdiction_or_scope: Sustainability disclosure
+    relevance: Climate-related risks and opportunities expected to affect cash flows, access to finance, or cost of capital.
+    used_for:
+      - climate_related_disclosure
+      - transition_and_physical_risk_assessment
+  - reference_id: REF_DCMM
+    name: GB/T 36073 DCMM data management capability maturity model
+    type: national_standard
+    jurisdiction_or_scope: China data management maturity
+    relevance: Data strategy, governance, architecture, application, quality, security, and lifecycle maturity.
+    used_for:
+      - data_maturity
+      - data_governance
+      - automated_data_availability
+  - reference_id: REF_SMART_TOURISM
+    name: smart tourism attraction construction or management guidelines
+    type: industry_guidance
+    jurisdiction_or_scope: Tourism attraction digitalization and management
+    relevance: Smart attraction operations, digital services, visitor management, and data-enabled tourism operations.
+    used_for:
+      - smart_operation_coverage
+      - visitor_management
+      - digital_tourism_services
