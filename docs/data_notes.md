@@ -73,6 +73,14 @@ Recommended checks include:
 - Outlier review for holidays, closures, weather events, policy changes, and one-off subsidies.
 - Documentation of manual assumptions and reviewer identity.
 
+## Verified Public Financial Data Upgrade
+
+The optional verified-data workflow in `src/public_data_fetcher.py` and `src/verified_data_pipeline.py` can collect selected public listed-company financial fields where available. The first-stage fields are `revenue`, `operating_cash_flow`, `total_assets`, `total_debt` or total-liabilities proxy, and `debt_ratio`.
+
+The workflow writes review outputs to `data_verified/` and does not overwrite the demo dataset in `data/`. Users must review `data_verified/replacement_preview.csv` before using `data_verified/financial_metrics_verified.csv`.
+
+NOI, AFFO, estimated distribution, maintenance CAPEX, and related derived fields may remain estimated for the MVP unless they are directly verified from source documents.
+
 ## Windows Path Notes
 
 Use `pathlib.Path` in Python code where possible. Configuration paths should avoid hard-coded path separators so the project remains compatible with Windows development environments.

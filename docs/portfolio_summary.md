@@ -27,6 +27,7 @@ Tourism assets such as scenic areas, resort complexes, and hotels may have stron
 - Scenario Simulator
 - Automatic Report Generator
 - Data and Configuration Validation
+- Optional Verified Public Financial Data Pipeline
 
 ## Tech Stack
 Python, Streamlit, Pandas, NumPy, Plotly, PyYAML, SciPy
@@ -40,11 +41,13 @@ The scoring framework integrates REITs cash flow and distribution capacity, tour
 
 The data confidence layer evaluates input completeness, source reliability, traceability, timeliness, and analytical coverage before users interpret scores or reports.
 
+An optional public-data pipeline can generate reviewable replacements for selected listed-company financial fields while keeping the deployed demo dataset unchanged by default.
+
 ## Data Disclaimer
 The MVP uses demo data that may include simulated or mixed values. Simulated values are explicitly labeled through data_type and source_note fields. The project does not present demo values as official disclosed data.
 
 ## Portfolio Value
-This project demonstrates the ability to translate a tourism-finance problem into a working data product, combine domain frameworks with dashboard design, implement transparent scoring logic, surface data quality limitations, run model validation checks, conduct scenario stress testing, and generate structured decision-support reports.
+This project demonstrates the ability to translate a tourism-finance problem into a working data product, combine domain frameworks with dashboard design, implement transparent scoring logic, surface data quality limitations, prepare reviewable public-data upgrades, run model validation checks, conduct scenario stress testing, and generate structured decision-support reports.
 
 ## Disclaimer
 This project is for portfolio demonstration and asset management support only. It is not investment advice, not a credit rating, not a valuation opinion, and not an official regulatory conclusion.

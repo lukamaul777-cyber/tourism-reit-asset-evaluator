@@ -28,6 +28,7 @@ Public infrastructure REITs underlying assets require stable operating cash flow
 - **Risk Warning Dashboard**: sample-relative risk metrics and warning interpretation.
 - **Model Reliability / Validity / Robustness Checks**: content validity, Cronbach's Alpha, AHP status, and weight sensitivity analysis.
 - **Data Quality / Data Confidence Assessment**: completeness, source reliability, traceability, timeliness, and coverage checks for demo inputs.
+- **Optional Verified Public Financial Data Pipeline**: reviewable replacement workflow for selected listed-company financial fields.
 - **Scenario Simulator**: stress-test style revenue, demand, cost, CAPEX, and reputation shocks.
 - **Automatic Report Generator**: deterministic Markdown asset reports.
 - **English / Simplified Chinese UI Switching**: sidebar language selector backed by `config/translations.yml`.
@@ -48,6 +49,8 @@ The second layer is the **100-point REITs Suitability Score**, which compares as
 The scoring model uses peer min-max normalization. Positive indicators reward higher values relative to the sample, while negative indicators reward lower values. Missing indicator values return missing scores and are excluded from module averages instead of being replaced with fabricated values.
 
 The data quality layer evaluates input transparency before interpretation. It scores completeness, source reliability, traceability, timeliness, and analytical coverage. This is a data-confidence diagnostic only; it does not certify data accuracy or replace source-document due diligence.
+
+The optional verified-data workflow can fetch selected public listed-company fields for Huangshan Tourism, Tianmu Lake, and BTG Hotels when AKShare is available. It creates review outputs in `data_verified/` and does not switch the deployed app away from the demo dataset by default.
 
 Supported weighting modes include `default_expert_weight`, `equal_weight`, and an `entropy_weight_placeholder` reserved for future use with a larger verified dataset. Reliability and validity checks include content validity review, Cronbach's Alpha for service-quality multi-item data only, AHP consistency when a pairwise matrix is provided, and ranking stability under weight perturbation.
 
@@ -105,6 +108,12 @@ tourism-reit-asset-evaluator/
 |   |-- risk_metrics.csv
 |   |-- digital_maturity_metrics.csv
 |   `-- data_dictionary.csv
+|-- data_sources/
+|   `-- company_mapping.csv
+|-- data_verified/
+|   |-- financial_metrics_public_raw.csv
+|   |-- financial_metrics_verified.csv
+|   `-- replacement_preview.csv
 |-- docs/
 |   |-- data_notes.md
 |   |-- github_about.md
@@ -112,6 +121,7 @@ tourism-reit-asset-evaluator/
 |   |-- model_methodology.md
 |   |-- portfolio_summary.md
 |   |-- references.md
+|   |-- verified_data_workflow.md
 |   `-- screenshots/
 |-- pages/
 |   |-- 1_Asset_Profile.py
@@ -129,19 +139,23 @@ tourism-reit-asset-evaluator/
 |-- scripts/
 |   |-- final_check.py
 |   |-- run_model_validity_checks.py
+|   |-- update_public_financial_data.py
+|   |-- validate_data_quality.py
 |   |-- validate_data_files.py
 |   |-- validate_project_config.py
 |   |-- validate_translations.py
-|   `-- validate_data_quality.py
+|   `-- validate_verified_financial_data.py
 |-- src/
 |   |-- chart_utils.py
 |   |-- data_quality.py
 |   |-- data_loader.py
 |   |-- gatekeeper.py
 |   |-- i18n.py
+|   |-- public_data_fetcher.py
 |   |-- reliability_validity.py
 |   |-- report_generator.py
 |   |-- scenario_simulator.py
+|   |-- verified_data_pipeline.py
 |   `-- scoring_model.py
 |-- LICENSE
 |-- requirements.txt
@@ -176,6 +190,20 @@ Launch the Streamlit app:
 ```powershell
 python -m streamlit run app.py
 ```
+
+## Verified Public Data Upgrade
+
+The deployed demo uses the project dataset in `data/` unless verified financial data is generated, reviewed, and manually adopted. The optional public-data workflow does not overwrite `data/financial_metrics.csv`.
+
+AKShare is optional and is not required for normal app runtime. To try live public financial data fetching:
+
+```powershell
+python -m pip install akshare
+python scripts/update_public_financial_data.py
+python scripts/validate_verified_financial_data.py
+```
+
+Review [docs/verified_data_workflow.md](docs/verified_data_workflow.md) and `data_verified/replacement_preview.csv` before using generated verified outputs.
 
 ## Language Switching
 
