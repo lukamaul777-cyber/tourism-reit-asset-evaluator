@@ -7,6 +7,7 @@ import streamlit as st
 
 from src.chart_utils import RISK_COLUMNS, make_heatmap_from_risk_scores, make_risk_radar
 from src.data_loader import get_asset_options, get_latest_year_data, load_all_data
+from src.data_source_ui import render_financial_data_source_selector
 from src.gatekeeper import run_gatekeeper_checks
 from src.i18n import language_selector, localize_dataframe, t, translate_column_name, translate_risk_label
 
@@ -26,6 +27,7 @@ def relative_risk_status(value: float, sample: pd.Series) -> tuple[str, str]:
 
 def main() -> None:
     language_selector()
+    _selected_financial_source, effective_financial_source, _did_fallback = render_financial_data_source_selector()
     st.title(t("risk.title"))
     st.caption(t("risk.subtitle"))
 
@@ -33,7 +35,7 @@ def main() -> None:
         asset_options = get_asset_options()
         selected_label = st.selectbox(t("common.select_asset"), list(asset_options.keys()))
         asset_id = asset_options[selected_label]
-        data = load_all_data()
+        data = load_all_data(financial_data_source=effective_financial_source)
     except Exception as exc:
         st.error(t("common.unable_to_load_risk_data", error=exc))
         if st.checkbox(t("common.debug_mode")):
@@ -95,7 +97,10 @@ def main() -> None:
     st.caption(f"data_type: {row['data_type']} | source_note: {row['source_note']}")
 
     try:
-        gatekeeper_results, _overall_status, _summary_text = run_gatekeeper_checks(asset_id)
+        gatekeeper_results, _overall_status, _summary_text = run_gatekeeper_checks(
+            asset_id,
+            financial_data_source=effective_financial_source,
+        )
         warning_rows = gatekeeper_results[gatekeeper_results["status"] == "Warning"]
         st.subheader(t("risk.gatekeeper_warning_explanation"))
         if warning_rows.empty:

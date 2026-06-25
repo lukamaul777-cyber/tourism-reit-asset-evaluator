@@ -16,6 +16,13 @@ VERIFIED_OUTPUT_PATH = PROJECT_ROOT / "data_verified" / "financial_metrics_verif
 PREVIEW_OUTPUT_PATH = PROJECT_ROOT / "data_verified" / "replacement_preview.csv"
 
 REPLACEABLE_FIELDS = ["revenue", "operating_cash_flow", "total_assets", "total_debt", "debt_ratio"]
+MONETARY_FIELDS = ["revenue", "operating_cash_flow", "total_assets", "total_liabilities", "total_debt"]
+YUAN_TO_RMB_MILLION_THRESHOLD = 1_000_000
+YUAN_TO_RMB_MILLION_DIVISOR = 1_000_000
+STANDARDIZED_UNIT = "RMB million"
+UNIT_CONVERSION_NOTE = (
+    "Monetary values were converted from RMB yuan to RMB million for consistency with project financial metrics."
+)
 ESTIMATED_FIELDS = [
     "ebitda",
     "noi",
@@ -41,7 +48,16 @@ PROJECT_REQUIRED_COLUMNS = [
     "data_type",
     "source_note",
 ]
-METADATA_COLUMNS = ["source_name", "source_url", "source_year", "verification_status", "last_verified_date"]
+METADATA_COLUMNS = [
+    "source_name",
+    "source_url",
+    "source_year",
+    "source_unit",
+    "standardized_unit",
+    "unit_note",
+    "verification_status",
+    "last_verified_date",
+]
 VERIFIED_COLUMNS = PROJECT_REQUIRED_COLUMNS + METADATA_COLUMNS
 PREVIEW_COLUMNS = [
     "asset_id",
@@ -52,6 +68,9 @@ PREVIEW_COLUMNS = [
     "old_value",
     "new_value",
     "source_name",
+    "source_unit",
+    "standardized_unit",
+    "unit_note",
     "verification_status",
     "notes",
 ]
@@ -102,6 +121,50 @@ def _normalise_public_df(public_df: pd.DataFrame, mapping_df: pd.DataFrame) -> p
             if mapped in output.columns:
                 output[column] = output[column].fillna(output[mapped])
                 output = output.drop(columns=[mapped])
+    return _standardize_public_units(output)
+
+
+def _standardize_public_units(public_df: pd.DataFrame) -> pd.DataFrame:
+    """Ensure public monetary values use RMB million before merge/preview."""
+    if public_df.empty:
+        return public_df.copy()
+
+    output = public_df.copy()
+    for metadata_column in ("source_unit", "standardized_unit", "unit_note"):
+        if metadata_column not in output.columns:
+            output[metadata_column] = pd.NA
+
+    for index, row in output.iterrows():
+        converted = False
+        has_monetary_value = False
+        for field in MONETARY_FIELDS:
+            if field not in output.columns:
+                continue
+            value = row.get(field)
+            if not _has_value(value):
+                continue
+            numeric_value = pd.to_numeric(value, errors="coerce")
+            if pd.isna(numeric_value):
+                continue
+            has_monetary_value = True
+            if abs(float(numeric_value)) > YUAN_TO_RMB_MILLION_THRESHOLD:
+                output.at[index, field] = round(float(numeric_value) / YUAN_TO_RMB_MILLION_DIVISOR, 4)
+                converted = True
+            else:
+                output.at[index, field] = round(float(numeric_value), 4)
+
+        output.at[index, "standardized_unit"] = STANDARDIZED_UNIT
+        if converted:
+            output.at[index, "source_unit"] = "RMB yuan"
+            output.at[index, "unit_note"] = UNIT_CONVERSION_NOTE
+        elif not _has_value(output.at[index, "unit_note"]):
+            output.at[index, "source_unit"] = "RMB million or already scaled" if has_monetary_value else "unknown"
+            output.at[index, "unit_note"] = (
+                "Monetary values did not exceed the yuan-detection threshold and were kept as provided."
+                if has_monetary_value
+                else "No monetary values available for unit standardization."
+            )
+
     return output
 
 
@@ -122,6 +185,9 @@ def _row_metadata(public_row: pd.Series | None, replaced_fields: list[str]) -> d
             "source_name": pd.NA,
             "source_url": pd.NA,
             "source_year": pd.NA,
+            "source_unit": "RMB million",
+            "standardized_unit": STANDARDIZED_UNIT,
+            "unit_note": "Demo financial metrics are already stored in RMB million.",
             "verification_status": "simulated",
             "last_verified_date": pd.NA,
         }
@@ -130,6 +196,9 @@ def _row_metadata(public_row: pd.Series | None, replaced_fields: list[str]) -> d
         "source_name": public_row.get("source_name", pd.NA),
         "source_url": public_row.get("source_url", pd.NA),
         "source_year": public_row.get("source_year", pd.NA),
+        "source_unit": public_row.get("source_unit", pd.NA),
+        "standardized_unit": public_row.get("standardized_unit", STANDARDIZED_UNIT),
+        "unit_note": public_row.get("unit_note", pd.NA),
         "verification_status": public_row.get("verification_status", "public_collected"),
         "last_verified_date": date.today().isoformat(),
     }
@@ -208,6 +277,9 @@ def create_replacement_preview(
                     "old_value": demo_row.get(field, pd.NA),
                     "new_value": new_value,
                     "source_name": public_row.get("source_name", pd.NA),
+                    "source_unit": public_row.get("source_unit", pd.NA),
+                    "standardized_unit": public_row.get("standardized_unit", STANDARDIZED_UNIT),
+                    "unit_note": public_row.get("unit_note", pd.NA),
                     "verification_status": public_row.get("verification_status", "public_collected"),
                     "notes": public_row.get("notes", pd.NA),
                 }

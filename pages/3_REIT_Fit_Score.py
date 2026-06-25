@@ -7,6 +7,7 @@ import streamlit as st
 
 from src.chart_utils import make_indicator_bar_chart, make_module_score_radar
 from src.data_loader import get_asset_options
+from src.data_source_ui import render_financial_data_source_selector
 from src.i18n import (
     language_selector,
     localize_dataframe,
@@ -23,6 +24,7 @@ st.set_page_config(page_title="REIT Fit Score", layout="wide")
 
 def main() -> None:
     language_selector()
+    _selected_financial_source, effective_financial_source, _did_fallback = render_financial_data_source_selector()
     st.title(t("score.title"))
     st.caption(t("score.subtitle"))
     st.info(t("score.notice"))
@@ -50,7 +52,8 @@ def main() -> None:
 
     try:
         indicator_scores_df, module_scores_df, total_scores_df = run_scoring_pipeline(
-            weight_mode=effective_weight_mode
+            weight_mode=effective_weight_mode,
+            financial_data_source=effective_financial_source,
         )
     except Exception as exc:
         st.error(t("score.pipeline_failed", error=exc))

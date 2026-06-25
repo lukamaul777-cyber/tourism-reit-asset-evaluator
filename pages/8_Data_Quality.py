@@ -12,6 +12,7 @@ from src.chart_utils import (
     make_missingness_chart,
 )
 from src.data_loader import get_asset_options
+from src.data_source_ui import render_financial_data_source_selector
 from src.data_quality import (
     calculate_all_data_confidence_scores,
     calculate_data_confidence_score,
@@ -112,6 +113,7 @@ def report_file_name(asset_id: str) -> str:
 
 def main() -> None:
     language = language_selector()
+    _selected_financial_source, effective_financial_source, _did_fallback = render_financial_data_source_selector()
     st.title(t("data_quality.title"))
     st.caption(t("data_quality.subtitle"))
     st.info(t("data_quality.intro"))
@@ -119,10 +121,10 @@ def main() -> None:
 
     try:
         asset_options = get_asset_options()
-        dataframes = load_quality_data()
-        all_scores_df = calculate_all_data_confidence_scores()
-        data_type_df = get_data_type_distribution()
-        missingness_df = get_missingness_summary()
+        dataframes = load_quality_data(financial_data_source=effective_financial_source)
+        all_scores_df = calculate_all_data_confidence_scores(financial_data_source=effective_financial_source)
+        data_type_df = get_data_type_distribution(financial_data_source=effective_financial_source)
+        missingness_df = get_missingness_summary(financial_data_source=effective_financial_source)
     except Exception as exc:
         st.error(t("data_quality.load_error", error=exc))
         if st.checkbox(t("common.debug_mode")):
@@ -217,7 +219,31 @@ def main() -> None:
         )
 
     st.subheader(t("data_quality.report"))
-    report_text = generate_data_quality_report(asset_id, language=language)
+    if effective_financial_source == "verified" and "financial_metrics" in dataframes:
+        st.subheader(t("data_quality.verified_metadata"))
+        metadata_columns = [
+            "asset_id",
+            "year",
+            "verification_status",
+            "source_name",
+            "source_unit",
+            "standardized_unit",
+            "unit_note",
+        ]
+        available_metadata = [
+            column for column in metadata_columns if column in dataframes["financial_metrics"].columns
+        ]
+        if available_metadata:
+            metadata_df = dataframes["financial_metrics"][available_metadata].copy()
+            st.dataframe(localize_dataframe(metadata_df), use_container_width=True, hide_index=True)
+        else:
+            st.info(t("data_quality.verified_metadata_unavailable"))
+
+    report_text = generate_data_quality_report(
+        asset_id,
+        language=language,
+        financial_data_source=effective_financial_source,
+    )
     st.markdown(report_text)
     st.download_button(
         t("data_quality.download_report"),

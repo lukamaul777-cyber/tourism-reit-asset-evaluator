@@ -79,7 +79,11 @@ The optional verified-data workflow in `src/public_data_fetcher.py` and `src/ver
 
 The workflow writes review outputs to `data_verified/` and does not overwrite the demo dataset in `data/`. Users must review `data_verified/replacement_preview.csv` before using `data_verified/financial_metrics_verified.csv`.
 
+AKShare public financial data may be returned in RMB yuan. The project internally stores monetary financial metrics in RMB million. Before replacement candidates are written, monetary fields are standardized to RMB million and unit metadata is recorded in `source_unit`, `standardized_unit`, and `unit_note`. Ratio fields such as `debt_ratio` are not converted as monetary values and remain decimal ratios.
+
 NOI, AFFO, estimated distribution, maintenance CAPEX, and related derived fields may remain estimated for the MVP unless they are directly verified from source documents.
+
+The Streamlit app defaults to the demo financial dataset for deployment stability. After running `python scripts/update_public_financial_data.py`, users can switch the sidebar financial data source to the verified public financial dataset. If the verified file is missing, the app automatically falls back to the demo dataset and displays a warning.
 
 ## Windows Path Notes
 

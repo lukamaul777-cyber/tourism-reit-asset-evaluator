@@ -6,6 +6,7 @@ import pandas as pd
 import streamlit as st
 
 from src.data_loader import get_asset_options, get_latest_year_data, load_all_data
+from src.data_source_ui import render_financial_data_source_selector
 from src.gatekeeper import run_gatekeeper_checks
 from src.i18n import language_selector, localize_dataframe, t, translate_column_name, translate_status
 
@@ -62,12 +63,13 @@ def format_metric_table(df: pd.DataFrame) -> pd.io.formats.style.Styler:
 def main() -> None:
     language_selector()
     render_page_header()
+    _selected_financial_source, effective_financial_source, _did_fallback = render_financial_data_source_selector()
 
     try:
         asset_options = get_asset_options()
         selected_label = st.selectbox(t("common.select_asset"), list(asset_options.keys()))
         asset_id = asset_options[selected_label]
-        data = load_all_data()
+        data = load_all_data(financial_data_source=effective_financial_source)
     except Exception as exc:
         st.error(t("common.unable_to_load_asset_data", error=exc))
         if st.checkbox(t("common.debug_mode")):
@@ -81,7 +83,10 @@ def main() -> None:
     selected_operation = latest_operation[latest_operation["asset_id"] == asset_id]
 
     try:
-        gatekeeper_results, overall_status, summary_text = run_gatekeeper_checks(asset_id)
+        gatekeeper_results, overall_status, summary_text = run_gatekeeper_checks(
+            asset_id,
+            financial_data_source=effective_financial_source,
+        )
     except Exception as exc:
         gatekeeper_results = pd.DataFrame()
         overall_status = "Unavailable"

@@ -52,6 +52,8 @@ The data quality layer evaluates input transparency before interpretation. It sc
 
 The optional verified-data workflow can fetch selected public listed-company fields for Huangshan Tourism, Tianmu Lake, and BTG Hotels when AKShare is available. It creates review outputs in `data_verified/` and does not switch the deployed app away from the demo dataset by default.
 
+The Streamlit sidebar includes a **Financial Data Source** selector. The default source is always `Demo Dataset`. If `Verified Public Financial Dataset` is selected but `data_verified/financial_metrics_verified.csv` is unavailable, the app falls back to the demo dataset and shows a clear warning.
+
 Supported weighting modes include `default_expert_weight`, `equal_weight`, and an `entropy_weight_placeholder` reserved for future use with a larger verified dataset. Reliability and validity checks include content validity review, Cronbach's Alpha for service-quality multi-item data only, AHP consistency when a pairwise matrix is provided, and ranking stability under weight perturbation.
 
 ## Reference Frameworks
@@ -96,6 +98,7 @@ Demo data should not be interpreted as official disclosed data. Model outputs ar
 tourism-reit-asset-evaluator/
 |-- app.py
 |-- config/
+|   |-- data_source.yml
 |   |-- indicator_framework.yml
 |   |-- model_references.yml
 |   |-- scoring_weights.yml
@@ -204,6 +207,8 @@ python scripts/validate_verified_financial_data.py
 ```
 
 Review [docs/verified_data_workflow.md](docs/verified_data_workflow.md) and `data_verified/replacement_preview.csv` before using generated verified outputs.
+
+After verified outputs are generated, use the app sidebar to switch between `Demo Dataset` and `Verified Public Financial Dataset`. Verified data replaces only selected public financial fields; `NOI`, `AFFO`, `estimated_distribution`, `maintenance_capex`, and related fields may still be estimated. Monetary fields are standardized to RMB million, while ratio fields such as `debt_ratio` remain decimal ratios.
 
 ## Language Switching
 

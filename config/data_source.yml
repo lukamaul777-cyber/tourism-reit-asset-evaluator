@@ -1,0 +1,10 @@
+default_financial_data: demo
+financial_data_sources:
+  demo:
+    label_en: Demo Dataset
+    label_zh: 示例数据集
+    path: data/financial_metrics.csv
+  verified:
+    label_en: Verified Public Financial Dataset
+    label_zh: 已核验公开财务数据集
+    path: data_verified/financial_metrics_verified.csv

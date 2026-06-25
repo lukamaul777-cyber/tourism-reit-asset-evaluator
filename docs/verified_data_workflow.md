@@ -28,6 +28,22 @@ Public data fetching may depend on third-party open-source interfaces such as AK
 
 Official annual reports, exchange announcements, prospectuses, and other issuer or exchange disclosures remain the preferred source for final verification. AKShare output should be treated as a convenient public collection layer, not as a substitute for source-document due diligence.
 
+## Unit Standardization
+
+AKShare public financial statement fields may be returned in RMB yuan. The project financial metrics use RMB million internally, matching the demo dataset in `data/financial_metrics.csv`.
+
+Before replacement candidates are written, monetary fields are standardized to RMB million:
+
+- `revenue`
+- `operating_cash_flow`
+- `total_assets`
+- `total_debt`
+- `total_liabilities`
+
+If a monetary value is clearly in yuan scale, for example with an absolute value above `1,000,000`, the pipeline divides it by `1,000,000` and records unit metadata in `source_unit`, `standardized_unit`, and `unit_note`.
+
+Ratio fields such as `debt_ratio` are not converted as monetary values. They remain decimal ratios, for example `0.17` means 17%.
+
 ## Review Process
 
 1. Install AKShare only if you want to try live public fetching:

@@ -195,6 +195,12 @@ en:
     table_name: Table Name
     column_name: Column Name
     missing_pct: Missing Percentage
+    verification_status: Verification Status
+    source_name: Source Name
+    source_unit: Source Unit
+    standardized_unit: Standardized Unit
+    unit_note: Unit Note
+    last_verified_date: Last Verified Date
   risk_labels:
     seasonality_risk: Seasonality Risk
     market_competition_risk: Market Competition Risk
@@ -468,6 +474,14 @@ en:
       mixed: Mixed
       simulated: Simulated
       unknown: Unknown
+    verified_metadata: Verified Financial Data Metadata
+    verified_metadata_unavailable: Verified financial metadata is unavailable for the selected dataset.
+  data_source:
+    financial_data_source: Financial Data Source
+    demo: Demo Dataset
+    verified: Verified Public Financial Dataset
+    verified_missing_fallback: Verified data file not found. Falling back to demo dataset.
+    current_financial_data_source: Current financial data source
 zh:
   app:
     title: "\u6587\u65C5 REITs \u8D44\u4EA7\u8BC4\u4F30\u5668"
@@ -665,6 +679,12 @@ zh:
     table_name: "\u6570\u636E\u8868"
     column_name: "\u5B57\u6BB5\u540D\u79F0"
     missing_pct: "\u7F3A\u5931\u6BD4\u4F8B"
+    verification_status: "\u6838\u9A8C\u72B6\u6001"
+    source_name: "\u6765\u6E90\u540D\u79F0"
+    source_unit: "\u6765\u6E90\u5355\u4F4D"
+    standardized_unit: "\u6807\u51C6\u5316\u5355\u4F4D"
+    unit_note: "\u5355\u4F4D\u8BF4\u660E"
+    last_verified_date: "\u6700\u8FD1\u6838\u9A8C\u65E5\u671F"
   risk_labels:
     seasonality_risk: "\u5B63\u8282\u6027\u98CE\u9669"
     market_competition_risk: "\u5E02\u573A\u7ADE\u4E89\u98CE\u9669"
@@ -916,3 +936,11 @@ zh:
       mixed: "\u6DF7\u5408\u6570\u636E"
       simulated: "\u6A21\u62DF\u6570\u636E"
       unknown: "\u672A\u77E5"
+    verified_metadata: "\u5DF2\u6838\u9A8C\u8D22\u52A1\u6570\u636E\u5143\u6570\u636E"
+    verified_metadata_unavailable: "\u5F53\u524D\u6570\u636E\u96C6\u4E2D\u6CA1\u6709\u53EF\u5C55\u793A\u7684\u5DF2\u6838\u9A8C\u8D22\u52A1\u5143\u6570\u636E\u3002"
+  data_source:
+    financial_data_source: "\u8D22\u52A1\u6570\u636E\u6765\u6E90"
+    demo: "\u793A\u4F8B\u6570\u636E\u96C6"
+    verified: "\u5DF2\u6838\u9A8C\u516C\u5F00\u8D22\u52A1\u6570\u636E\u96C6"
+    verified_missing_fallback: "\u672A\u627E\u5230\u5DF2\u6838\u9A8C\u6570\u636E\u6587\u4EF6\uFF0C\u5DF2\u81EA\u52A8\u56DE\u9000\u81F3\u793A\u4F8B\u6570\u636E\u96C6\u3002"
+    current_financial_data_source: "\u5F53\u524D\u8D22\u52A1\u6570\u636E\u6765\u6E90"

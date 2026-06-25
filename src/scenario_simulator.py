@@ -80,9 +80,12 @@ def _validate_parameter(name: str, value: float) -> None:
         )
 
 
-def load_base_scenario_data(data_dir: str | Path = "data") -> pd.DataFrame:
+def load_base_scenario_data(
+    data_dir: str | Path = "data",
+    financial_data_source: str = "demo",
+) -> pd.DataFrame:
     """Return latest-year merged data needed for scenario simulation."""
-    scoring_df, _raw_tables = load_scoring_data(_resolve_data_dir(data_dir))
+    scoring_df, _raw_tables = load_scoring_data(_resolve_data_dir(data_dir), financial_data_source)
     return scoring_df
 
 
@@ -114,6 +117,7 @@ def simulate_asset_scenario(
     ota_score_decline: float = 0.0,
     data_dir: str | Path = "data",
     weight_mode: str = "default_expert_weight",
+    financial_data_source: str = "demo",
 ) -> dict[str, Any]:
     """Simulate asset-level downside shocks and recalculate the suitability score."""
     parameters = {
@@ -128,7 +132,7 @@ def simulate_asset_scenario(
     for parameter_name, parameter_value in parameters.items():
         _validate_parameter(parameter_name, parameter_value)
 
-    base_scoring_df, _raw_tables = load_scoring_data(_resolve_data_dir(data_dir))
+    base_scoring_df, _raw_tables = load_scoring_data(_resolve_data_dir(data_dir), financial_data_source)
     base_indicator_scores_df, base_module_scores_df, base_total_scores_df = _recalculate_scores_from_adjusted_dataframe(
         base_scoring_df,
         weight_mode,
@@ -439,9 +443,12 @@ def generate_scenario_explanation(result: dict[str, Any]) -> str:
     )
 
 
-def run_demo_scenarios(data_dir: str | Path = "data") -> pd.DataFrame:
+def run_demo_scenarios(
+    data_dir: str | Path = "data",
+    financial_data_source: str = "demo",
+) -> pd.DataFrame:
     """Run three predefined sample scenarios for each asset."""
-    base_data = load_base_scenario_data(data_dir)
+    base_data = load_base_scenario_data(data_dir, financial_data_source)
     scenarios = {
         "mild downside": {
             "revenue_decline_pct": 0.05,
@@ -467,7 +474,12 @@ def run_demo_scenarios(data_dir: str | Path = "data") -> pd.DataFrame:
 
     for asset_id in base_data["asset_id"].dropna().astype(str):
         for scenario_name, kwargs in scenarios.items():
-            result = simulate_asset_scenario(asset_id, data_dir=data_dir, **kwargs)
+            result = simulate_asset_scenario(
+                asset_id,
+                data_dir=data_dir,
+                financial_data_source=financial_data_source,
+                **kwargs,
+            )
             rows.append(
                 {
                     "asset_id": result["asset_id"],

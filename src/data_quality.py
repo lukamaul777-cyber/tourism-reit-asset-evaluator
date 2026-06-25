@@ -7,6 +7,11 @@ from typing import Any
 
 import pandas as pd
 
+try:
+    from src.data_loader import load_financial_metrics
+except ModuleNotFoundError:  # Allows `python src/data_quality.py`.
+    from data_loader import load_financial_metrics  # type: ignore
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
@@ -74,7 +79,10 @@ def resolve_data_dir(data_dir: str | Path = "data") -> Path:
     return path
 
 
-def load_quality_data(data_dir: str | Path = "data") -> dict[str, pd.DataFrame]:
+def load_quality_data(
+    data_dir: str | Path = "data",
+    financial_data_source: str = "demo",
+) -> dict[str, pd.DataFrame]:
     """Load all data files used by the data quality module."""
     resolved_dir = resolve_data_dir(data_dir)
     dataframes: dict[str, pd.DataFrame] = {}
@@ -84,7 +92,10 @@ def load_quality_data(data_dir: str | Path = "data") -> dict[str, pd.DataFrame]:
         if not path.exists():
             dataframes[table_name] = pd.DataFrame()
             continue
-        dataframes[table_name] = pd.read_csv(path)
+        if table_name == "financial_metrics":
+            dataframes[table_name] = load_financial_metrics(financial_data_source)
+        else:
+            dataframes[table_name] = pd.read_csv(path)
 
     return dataframes
 
@@ -332,10 +343,11 @@ def calculate_data_confidence_score(
     asset_id: str,
     dataframes: dict[str, pd.DataFrame] | None = None,
     data_dir: str | Path = "data",
+    financial_data_source: str = "demo",
 ) -> dict[str, Any]:
     """Calculate the weighted data confidence score for one asset."""
     if dataframes is None:
-        dataframes = load_quality_data(data_dir)
+        dataframes = load_quality_data(data_dir, financial_data_source)
 
     completeness = calculate_completeness_score(asset_id, dataframes)
     source_reliability = calculate_source_reliability_score(asset_id, dataframes)
@@ -383,9 +395,12 @@ def calculate_data_confidence_score(
     }
 
 
-def calculate_all_data_confidence_scores(data_dir: str | Path = "data") -> pd.DataFrame:
+def calculate_all_data_confidence_scores(
+    data_dir: str | Path = "data",
+    financial_data_source: str = "demo",
+) -> pd.DataFrame:
     """Calculate data confidence scores for all assets."""
-    dataframes = load_quality_data(data_dir)
+    dataframes = load_quality_data(data_dir, financial_data_source)
     rows = [calculate_data_confidence_score(asset_id, dataframes) for asset_id in get_asset_ids(dataframes)]
     if not rows:
         return pd.DataFrame()
@@ -408,9 +423,12 @@ def calculate_all_data_confidence_scores(data_dir: str | Path = "data") -> pd.Da
     ).sort_values("data_confidence_score", ascending=False)
 
 
-def get_data_type_distribution(data_dir: str | Path = "data") -> pd.DataFrame:
+def get_data_type_distribution(
+    data_dir: str | Path = "data",
+    financial_data_source: str = "demo",
+) -> pd.DataFrame:
     """Summarize data_type counts and percentages by table and overall."""
-    dataframes = load_quality_data(data_dir)
+    dataframes = load_quality_data(data_dir, financial_data_source)
     rows: list[dict[str, Any]] = []
 
     for table_name, df in dataframes.items():
@@ -447,9 +465,12 @@ def get_data_type_distribution(data_dir: str | Path = "data") -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def get_missingness_summary(data_dir: str | Path = "data") -> pd.DataFrame:
+def get_missingness_summary(
+    data_dir: str | Path = "data",
+    financial_data_source: str = "demo",
+) -> pd.DataFrame:
     """Summarize missing values by table and column."""
-    dataframes = load_quality_data(data_dir)
+    dataframes = load_quality_data(data_dir, financial_data_source)
     rows: list[dict[str, Any]] = []
 
     for table_name, df in dataframes.items():
@@ -536,9 +557,10 @@ def generate_data_quality_report(
     asset_id: str,
     data_dir: str | Path = "data",
     language: str = "en",
+    financial_data_source: str = "demo",
 ) -> str:
     """Generate a deterministic Markdown data quality report for one asset."""
-    dataframes = load_quality_data(data_dir)
+    dataframes = load_quality_data(data_dir, financial_data_source)
     result = calculate_data_confidence_score(asset_id, dataframes)
 
     if language == "zh":

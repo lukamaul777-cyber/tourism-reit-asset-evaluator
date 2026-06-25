@@ -12,6 +12,7 @@ from src.chart_utils import (
     make_score_change_chart,
 )
 from src.data_loader import get_asset_options
+from src.data_source_ui import render_financial_data_source_selector
 from src.i18n import language_selector, localize_dataframe, t, translate_column_name
 from src.scenario_simulator import run_demo_scenarios, simulate_asset_scenario
 
@@ -160,6 +161,7 @@ def make_demo_scenario_chart(demo_df: pd.DataFrame):
 
 def main() -> None:
     language_selector()
+    _selected_financial_source, effective_financial_source, _did_fallback = render_financial_data_source_selector()
     st.title(t("scenario.title"))
     st.caption(t("scenario.subtitle"))
     st.info(t("scenario.notice"))
@@ -219,6 +221,7 @@ def main() -> None:
             operating_cost_increase_pct=operating_cost_increase_pct,
             maintenance_capex_increase_pct=maintenance_capex_increase_pct,
             ota_score_decline=ota_score_decline,
+            financial_data_source=effective_financial_source,
         )
     except Exception as exc:
         st.error(t("scenario.failed", error=exc))
@@ -350,7 +353,7 @@ def main() -> None:
     st.subheader(t("scenario.demo_comparison"))
     st.caption(t("scenario.demo_caption"))
     try:
-        demo_df = run_demo_scenarios()
+        demo_df = run_demo_scenarios(financial_data_source=effective_financial_source)
         display_demo_df = demo_df.copy()
         display_demo_df["scenario_name"] = display_demo_df["scenario_name"].map(translate_scenario_name)
         display_demo_df = localize_dataframe(display_demo_df)

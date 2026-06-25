@@ -12,6 +12,11 @@ from typing import Any
 
 import pandas as pd
 
+try:
+    from src.data_loader import load_financial_metrics
+except ModuleNotFoundError:  # Allows `python src/gatekeeper.py`.
+    from data_loader import load_financial_metrics  # type: ignore
+
 
 HARD_CONDITIONS = {
     "ownership_clear",
@@ -94,7 +99,10 @@ def _latest_rows_by_asset(df: pd.DataFrame) -> pd.DataFrame:
     return latest_df.groupby("asset_id", as_index=False).tail(1)
 
 
-def load_gatekeeper_data(data_dir: str | Path = "data") -> pd.DataFrame:
+def load_gatekeeper_data(
+    data_dir: str | Path = "data",
+    financial_data_source: str = "demo",
+) -> pd.DataFrame:
     """Load and merge assets with latest financial and risk metrics.
 
     Returns an asset-level dataframe using:
@@ -104,7 +112,7 @@ def load_gatekeeper_data(data_dir: str | Path = "data") -> pd.DataFrame:
     """
     base_dir = _resolve_data_dir(data_dir)
     assets_df = pd.read_csv(base_dir / "assets.csv")
-    financial_df = pd.read_csv(base_dir / "financial_metrics.csv")
+    financial_df = load_financial_metrics(financial_data_source)
     risk_df = pd.read_csv(base_dir / "risk_metrics.csv")
 
     latest_financial_df = _latest_rows_by_asset(financial_df).add_prefix("financial_")
@@ -412,7 +420,11 @@ def check_continuous_operation_warning(row: pd.Series, risk_df: pd.DataFrame) ->
     )
 
 
-def run_gatekeeper_checks(asset_id: str, data_dir: str | Path = "data") -> tuple[pd.DataFrame, str, str]:
+def run_gatekeeper_checks(
+    asset_id: str,
+    data_dir: str | Path = "data",
+    financial_data_source: str = "demo",
+) -> tuple[pd.DataFrame, str, str]:
     """Run all gatekeeper checks for one asset.
 
     Returns
@@ -421,8 +433,8 @@ def run_gatekeeper_checks(asset_id: str, data_dir: str | Path = "data") -> tuple
         ``(gatekeeper_results, overall_status, summary_text)``.
     """
     base_dir = _resolve_data_dir(data_dir)
-    assets_merged_df = load_gatekeeper_data(base_dir)
-    financial_df = pd.read_csv(base_dir / "financial_metrics.csv")
+    assets_merged_df = load_gatekeeper_data(base_dir, financial_data_source)
+    financial_df = load_financial_metrics(financial_data_source)
     risk_df = pd.read_csv(base_dir / "risk_metrics.csv")
 
     matched_rows = assets_merged_df[assets_merged_df["asset_id"] == asset_id]

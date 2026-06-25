@@ -8,6 +8,7 @@ from pathlib import Path
 import streamlit as st
 
 from src.data_loader import get_asset_options, get_project_root
+from src.data_source_ui import render_financial_data_source_selector
 from src.i18n import language_selector, t, translate_rating, translate_status
 from src.report_generator import (
     generate_asset_report,
@@ -144,10 +145,15 @@ def make_report_filename(asset_id: str, scenario_included: bool, suffix: str) ->
     return f"tourism_reit_report_{asset_id}{scenario_part}.{suffix}"
 
 
-def render_status_cards(asset_id: str, weight_mode: str, scenario_included: bool) -> None:
+def render_status_cards(
+    asset_id: str,
+    weight_mode: str,
+    scenario_included: bool,
+    financial_data_source: str = "demo",
+) -> None:
     try:
-        gatekeeper = summarize_gatekeeper(asset_id)
-        score = summarize_score(asset_id, weight_mode=weight_mode)
+        gatekeeper = summarize_gatekeeper(asset_id, financial_data_source=financial_data_source)
+        score = summarize_score(asset_id, weight_mode=weight_mode, financial_data_source=financial_data_source)
     except Exception as exc:
         st.warning(t("report.quality_unavailable", error=exc))
         return
@@ -172,6 +178,7 @@ def save_timestamped_report(report_text: str, asset_id: str, scenario_included: 
 
 def main() -> None:
     language_selector()
+    _selected_financial_source, effective_financial_source, _did_fallback = render_financial_data_source_selector()
     st.title(t("report.title"))
     st.caption(t("report.subtitle"))
     st.info(t("report.intro"))
@@ -217,11 +224,17 @@ def main() -> None:
         scenario_result = None
         try:
             if include_scenario:
-                scenario_result = simulate_asset_scenario(asset_id=asset_id, weight_mode=weight_mode, **scenario_kwargs)
+                scenario_result = simulate_asset_scenario(
+                    asset_id=asset_id,
+                    weight_mode=weight_mode,
+                    financial_data_source=effective_financial_source,
+                    **scenario_kwargs,
+                )
             report_text = generate_asset_report(
                 asset_id=asset_id,
                 weight_mode=weight_mode,
                 scenario_result=scenario_result,
+                financial_data_source=effective_financial_source,
             )
         except Exception as exc:
             st.error(t("report.generation_failed", error=exc))
@@ -233,6 +246,7 @@ def main() -> None:
         st.session_state["generated_report_asset_id"] = asset_id
         st.session_state["generated_report_weight_mode"] = weight_mode
         st.session_state["generated_report_scenario_included"] = include_scenario
+        st.session_state["generated_report_financial_data_source"] = effective_financial_source
 
     report_text = st.session_state["generated_report_text"]
     report_asset_id = st.session_state["generated_report_asset_id"]
@@ -240,7 +254,12 @@ def main() -> None:
 
     with preview_col:
         st.subheader(t("report.quality_checks"))
-        render_status_cards(report_asset_id, st.session_state["generated_report_weight_mode"], scenario_included)
+        render_status_cards(
+            report_asset_id,
+            st.session_state["generated_report_weight_mode"],
+            scenario_included,
+            st.session_state.get("generated_report_financial_data_source", "demo"),
+        )
 
         st.subheader(t("report.preview"))
         st.markdown(report_text)

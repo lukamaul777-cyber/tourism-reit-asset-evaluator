@@ -29,9 +29,19 @@ PUBLIC_RAW_COLUMNS = [
     "source_name",
     "source_url",
     "source_year",
+    "source_unit",
+    "standardized_unit",
+    "unit_note",
     "verification_status",
     "notes",
 ]
+MONETARY_FIELDS = ["revenue", "operating_cash_flow", "total_assets", "total_liabilities", "total_debt"]
+YUAN_TO_RMB_MILLION_THRESHOLD = 1_000_000
+YUAN_TO_RMB_MILLION_DIVISOR = 1_000_000
+STANDARDIZED_UNIT = "RMB million"
+UNIT_CONVERSION_NOTE = (
+    "Monetary values were converted from RMB yuan to RMB million for consistency with project financial metrics."
+)
 
 FIELD_ALIASES = {
     "revenue": ["营业总收入", "营业收入", "total_operating_revenue", "operating_revenue", "revenue"],
@@ -75,6 +85,9 @@ def _blank_row(
         "source_name": source_name,
         "source_url": "https://akshare.akfamily.xyz/",
         "source_year": year,
+        "source_unit": "unknown",
+        "standardized_unit": STANDARDIZED_UNIT,
+        "unit_note": "No monetary values available for unit standardization.",
         "verification_status": status,
         "notes": notes,
     }
@@ -144,6 +157,38 @@ def _find_field_value(df: pd.DataFrame, year: int, aliases: list[str]) -> float 
     return None
 
 
+def _standardize_monetary_values(row: dict[str, Any]) -> dict[str, Any]:
+    """Convert AKShare monetary values from RMB yuan to RMB million when needed."""
+    converted = False
+    observed_large_value = False
+
+    for field in MONETARY_FIELDS:
+        value = row.get(field)
+        if value is None or pd.isna(value):
+            continue
+        numeric_value = pd.to_numeric(value, errors="coerce")
+        if pd.isna(numeric_value):
+            continue
+        if abs(float(numeric_value)) > YUAN_TO_RMB_MILLION_THRESHOLD:
+            observed_large_value = True
+            row[field] = round(float(numeric_value) / YUAN_TO_RMB_MILLION_DIVISOR, 4)
+            converted = True
+        else:
+            row[field] = round(float(numeric_value), 4)
+
+    if converted:
+        row["source_unit"] = "RMB yuan"
+        row["unit_note"] = UNIT_CONVERSION_NOTE
+    elif observed_large_value:
+        row["source_unit"] = "RMB yuan"
+        row["unit_note"] = UNIT_CONVERSION_NOTE
+    else:
+        row["source_unit"] = "RMB million or already scaled"
+        row["unit_note"] = "Monetary values did not exceed the yuan-detection threshold and were kept as provided."
+    row["standardized_unit"] = STANDARDIZED_UNIT
+    return row
+
+
 def fetch_financial_indicators_with_akshare(
     stock_code: str,
     start_year: int = 2021,
@@ -208,23 +253,22 @@ def fetch_financial_indicators_with_akshare(
         if not notes:
             notes = "Public financial statement fields parsed from AKShare."
 
-        rows.append(
-            {
-                "stock_code": str(stock_code),
-                "year": year,
-                "revenue": revenue,
-                "operating_cash_flow": operating_cash_flow,
-                "total_assets": total_assets,
-                "total_liabilities": total_liabilities,
-                "total_debt": total_debt,
-                "debt_ratio": debt_ratio,
-                "source_name": "AKShare Sina financial statement interface",
-                "source_url": "https://akshare.akfamily.xyz/",
-                "source_year": year,
-                "verification_status": status,
-                "notes": notes,
-            }
-        )
+        row = {
+            "stock_code": str(stock_code),
+            "year": year,
+            "revenue": revenue,
+            "operating_cash_flow": operating_cash_flow,
+            "total_assets": total_assets,
+            "total_liabilities": total_liabilities,
+            "total_debt": total_debt,
+            "debt_ratio": debt_ratio,
+            "source_name": "AKShare Sina financial statement interface",
+            "source_url": "https://akshare.akfamily.xyz/",
+            "source_year": year,
+            "verification_status": status,
+            "notes": notes,
+        }
+        rows.append(_standardize_monetary_values(row))
 
     return pd.DataFrame(rows)
 

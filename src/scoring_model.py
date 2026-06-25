@@ -14,6 +14,11 @@ from typing import Any
 import pandas as pd
 import yaml
 
+try:
+    from src.data_loader import load_financial_metrics
+except ModuleNotFoundError:  # Allows `python src/scoring_model.py`.
+    from data_loader import load_financial_metrics  # type: ignore
+
 
 MODULE_ORDER = [
     "A. REITs Cash Flow and Distribution Capacity",
@@ -88,7 +93,10 @@ def _combine_source_notes(row: pd.Series, prefixes: list[str]) -> tuple[str, str
     return combined_data_type, combined_source_note
 
 
-def load_scoring_data(data_dir: str | Path = "data") -> tuple[pd.DataFrame, dict[str, pd.DataFrame]]:
+def load_scoring_data(
+    data_dir: str | Path = "data",
+    financial_data_source: str = "demo",
+) -> tuple[pd.DataFrame, dict[str, pd.DataFrame]]:
     """Load and merge latest-year data for the scoring model.
 
     Returns
@@ -99,7 +107,7 @@ def load_scoring_data(data_dir: str | Path = "data") -> tuple[pd.DataFrame, dict
     base_dir = _resolve_data_dir(data_dir)
     tables = {
         "assets": pd.read_csv(base_dir / "assets.csv"),
-        "financial_metrics": pd.read_csv(base_dir / "financial_metrics.csv"),
+        "financial_metrics": load_financial_metrics(financial_data_source),
         "operation_metrics": pd.read_csv(base_dir / "operation_metrics.csv"),
         "service_quality_metrics": pd.read_csv(base_dir / "service_quality_metrics.csv"),
         "risk_metrics": pd.read_csv(base_dir / "risk_metrics.csv"),
@@ -570,9 +578,10 @@ def generate_score_explanation(
 def run_scoring_pipeline(
     data_dir: str | Path = "data",
     weight_mode: str = "default_expert_weight",
+    financial_data_source: str = "demo",
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Run the full scoring pipeline."""
-    scoring_df, _tables = load_scoring_data(data_dir)
+    scoring_df, _tables = load_scoring_data(data_dir, financial_data_source)
     indicator_config = _load_yaml(_config_path("indicator_framework.yml"))
     indicator_scores_df = calculate_indicator_scores(scoring_df, indicator_config)
     module_scores_df = calculate_module_scores(indicator_scores_df)

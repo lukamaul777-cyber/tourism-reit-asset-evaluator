@@ -7,6 +7,7 @@ import streamlit as st
 
 from src.chart_utils import make_score_bar_chart
 from src.data_loader import get_asset_options, load_all_data
+from src.data_source_ui import render_financial_data_source_selector
 from src.gatekeeper import run_gatekeeper_checks
 from src.i18n import language_selector, localize_dataframe, t, translate_column_name
 from src.scoring_model import ENTROPY_PLACEHOLDER_MESSAGE, run_scoring_pipeline
@@ -40,10 +41,13 @@ def selected_weight_mode() -> str:
     )
 
 
-def count_gatekeeper_warnings(asset_ids: list[str]) -> int:
+def count_gatekeeper_warnings(asset_ids: list[str], financial_data_source: str = "demo") -> int:
     warning_count = 0
     for asset_id in asset_ids:
-        results_df, overall_status, _summary = run_gatekeeper_checks(asset_id)
+        results_df, overall_status, _summary = run_gatekeeper_checks(
+            asset_id,
+            financial_data_source=financial_data_source,
+        )
         has_warning = overall_status == "Pass with Warning" or (results_df["status"] == "Warning").any()
         warning_count += int(has_warning)
     return warning_count
@@ -72,13 +76,14 @@ def main() -> None:
     )
 
     st.sidebar.header(t("common.controls"))
+    _selected_financial_source, effective_financial_source, _did_fallback = render_financial_data_source_selector()
     weight_mode = selected_weight_mode()
 
     try:
         asset_options = get_asset_options()
         selected_asset_label = st.sidebar.selectbox(t("common.selected_asset"), list(asset_options.keys()))
         selected_asset_id = asset_options[selected_asset_label]
-        all_data = load_all_data()
+        all_data = load_all_data(financial_data_source=effective_financial_source)
     except Exception as exc:
         st.error(t("common.unable_to_load_data", error=exc))
         if st.sidebar.checkbox(t("common.debug_mode")):
@@ -97,7 +102,8 @@ def main() -> None:
 
     try:
         _indicator_scores_df, _module_scores_df, total_scores_df = run_scoring_pipeline(
-            weight_mode=effective_weight_mode
+            weight_mode=effective_weight_mode,
+            financial_data_source=effective_financial_source,
         )
     except Exception as exc:
         st.error(t("score.pipeline_failed", error=exc))
@@ -108,7 +114,7 @@ def main() -> None:
     asset_ids = all_data["assets"]["asset_id"].dropna().astype(str).tolist()
     average_score = pd.to_numeric(total_scores_df["total_score"], errors="coerce").mean()
     highest_row = total_scores_df.sort_values("total_score", ascending=False).iloc[0]
-    warning_count = count_gatekeeper_warnings(asset_ids)
+    warning_count = count_gatekeeper_warnings(asset_ids, effective_financial_source)
 
     kpi_cols = st.columns(4)
     kpi_cols[0].metric(t("labels.asset_count"), len(asset_ids))

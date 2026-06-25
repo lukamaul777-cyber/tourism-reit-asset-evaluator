@@ -31,6 +31,7 @@ PROJECT_REQUIRED_COLUMNS = {
     "source_note",
 }
 VERIFIED_METADATA_COLUMNS = {"source_name", "source_url", "source_year", "verification_status", "last_verified_date"}
+UNIT_METADATA_COLUMNS = {"source_unit", "standardized_unit", "unit_note"}
 PREVIEW_COLUMNS = {
     "asset_id",
     "asset_name",
@@ -40,6 +41,9 @@ PREVIEW_COLUMNS = {
     "old_value",
     "new_value",
     "source_name",
+    "source_unit",
+    "standardized_unit",
+    "unit_note",
     "verification_status",
     "notes",
 }
@@ -66,6 +70,8 @@ NUMERIC_VERIFIED_COLUMNS = {
     "debt_ratio",
     "capex_to_ocf",
 }
+MONETARY_COLUMNS = {"revenue", "operating_cash_flow", "total_assets", "total_debt"}
+MONETARY_VALUE_WARNING_THRESHOLD = 1_000_000
 
 
 def _read_csv(path: Path) -> pd.DataFrame:
@@ -100,6 +106,37 @@ def _validate_numeric_values(df: pd.DataFrame, columns: set[str], label: str, er
             errors.append(f"{label} column {column} contains non-numeric replacement values.")
 
 
+def _validate_monetary_unit_scale(df: pd.DataFrame, label: str, errors: list[str]) -> None:
+    """Flag monetary values that still look like RMB yuan instead of RMB million."""
+    if df.empty:
+        return
+    for column in MONETARY_COLUMNS:
+        if column not in df.columns:
+            continue
+        values = pd.to_numeric(df[column], errors="coerce").dropna()
+        suspicious = values[values.abs() > MONETARY_VALUE_WARNING_THRESHOLD]
+        if not suspicious.empty:
+            errors.append(
+                f"{label} column {column} has values above {MONETARY_VALUE_WARNING_THRESHOLD:,}; "
+                "these may still be RMB yuan instead of RMB million."
+            )
+
+
+def _validate_preview_monetary_unit_scale(preview_df: pd.DataFrame, errors: list[str]) -> None:
+    if preview_df.empty or not {"field_name", "new_value"}.issubset(preview_df.columns):
+        return
+    monetary_preview = preview_df[preview_df["field_name"].isin(MONETARY_COLUMNS)].copy()
+    if monetary_preview.empty:
+        return
+    values = pd.to_numeric(monetary_preview["new_value"], errors="coerce").dropna()
+    suspicious = values[values.abs() > MONETARY_VALUE_WARNING_THRESHOLD]
+    if not suspicious.empty:
+        errors.append(
+            "replacement_preview.csv has monetary new_value entries above "
+            f"{MONETARY_VALUE_WARNING_THRESHOLD:,}; these may still be RMB yuan instead of RMB million."
+        )
+
+
 def validate_verified_financial_data() -> tuple[list[str], dict[str, pd.DataFrame]]:
     """Run validation checks and return errors plus loaded tables."""
     errors: list[str] = []
@@ -122,12 +159,13 @@ def validate_verified_financial_data() -> tuple[list[str], dict[str, pd.DataFram
         tables["verified"] = verified_df
         _validate_required_columns(
             verified_df,
-            PROJECT_REQUIRED_COLUMNS | VERIFIED_METADATA_COLUMNS,
+            PROJECT_REQUIRED_COLUMNS | VERIFIED_METADATA_COLUMNS | UNIT_METADATA_COLUMNS,
             "financial_metrics_verified.csv",
             errors,
         )
         _validate_statuses(verified_df, "financial_metrics_verified.csv", errors)
         _validate_numeric_values(verified_df, NUMERIC_VERIFIED_COLUMNS, "financial_metrics_verified.csv", errors)
+        _validate_monetary_unit_scale(verified_df, "financial_metrics_verified.csv", errors)
     else:
         errors.append(f"Missing verified output file: {VERIFIED_PATH}")
 
@@ -137,6 +175,7 @@ def validate_verified_financial_data() -> tuple[list[str], dict[str, pd.DataFram
         _validate_required_columns(preview_df, PREVIEW_COLUMNS, "replacement_preview.csv", errors)
         _validate_statuses(preview_df, "replacement_preview.csv", errors)
         _validate_numeric_values(preview_df, {"year", "old_value", "new_value"}, "replacement_preview.csv", errors)
+        _validate_preview_monetary_unit_scale(preview_df, errors)
     else:
         errors.append(f"Missing replacement preview file: {PREVIEW_PATH}")
 

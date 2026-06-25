@@ -19,6 +19,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.gatekeeper import run_gatekeeper_checks
+from src.data_loader import load_financial_metrics
 from src.reliability_validity import run_model_validity_pipeline
 from src.scenario_simulator import simulate_asset_scenario
 from src.scoring_model import load_scoring_data, run_scoring_pipeline
@@ -88,11 +89,15 @@ def _safe_value(row: pd.Series | None, column: str) -> Any:
     return None if pd.isna(value) else value
 
 
-def get_asset_context(asset_id: str, data_dir: str | Path = "data") -> dict[str, Any]:
+def get_asset_context(
+    asset_id: str,
+    data_dir: str | Path = "data",
+    financial_data_source: str = "demo",
+) -> dict[str, Any]:
     """Load asset basic info and latest available metric rows."""
     base_dir = _resolve_data_dir(data_dir)
     assets_df = pd.read_csv(base_dir / "assets.csv")
-    financial_df = _latest_rows_by_asset(pd.read_csv(base_dir / "financial_metrics.csv"))
+    financial_df = _latest_rows_by_asset(load_financial_metrics(financial_data_source))
     operation_df = _latest_rows_by_asset(pd.read_csv(base_dir / "operation_metrics.csv"))
     service_df = _latest_rows_by_asset(pd.read_csv(base_dir / "service_quality_metrics.csv"))
     risk_df = _latest_rows_by_asset(pd.read_csv(base_dir / "risk_metrics.csv"))
@@ -117,9 +122,17 @@ def get_asset_context(asset_id: str, data_dir: str | Path = "data") -> dict[str,
     }
 
 
-def summarize_gatekeeper(asset_id: str, data_dir: str | Path = "data") -> dict[str, Any]:
+def summarize_gatekeeper(
+    asset_id: str,
+    data_dir: str | Path = "data",
+    financial_data_source: str = "demo",
+) -> dict[str, Any]:
     """Summarize Regulatory Gatekeeper results."""
-    results_df, overall_status, summary_text = run_gatekeeper_checks(asset_id, data_dir)
+    results_df, overall_status, summary_text = run_gatekeeper_checks(
+        asset_id,
+        data_dir,
+        financial_data_source,
+    )
     return {
         "overall_status": overall_status,
         "passed_conditions": results_df.loc[results_df["status"] == "Pass", "condition"].tolist(),
@@ -134,9 +147,14 @@ def summarize_score(
     asset_id: str,
     data_dir: str | Path = "data",
     weight_mode: str = "default_expert_weight",
+    financial_data_source: str = "demo",
 ) -> dict[str, Any]:
     """Summarize REITs suitability score for one asset."""
-    _indicator_scores_df, module_scores_df, total_scores_df = run_scoring_pipeline(data_dir, weight_mode)
+    _indicator_scores_df, module_scores_df, total_scores_df = run_scoring_pipeline(
+        data_dir,
+        weight_mode,
+        financial_data_source,
+    )
     selected_total = total_scores_df[total_scores_df["asset_id"] == asset_id]
     if selected_total.empty:
         raise ValueError(f"No score found for asset_id: {asset_id}")
@@ -176,9 +194,13 @@ def summarize_score(
     }
 
 
-def summarize_risk(asset_id: str, data_dir: str | Path = "data") -> dict[str, Any]:
+def summarize_risk(
+    asset_id: str,
+    data_dir: str | Path = "data",
+    financial_data_source: str = "demo",
+) -> dict[str, Any]:
     """Summarize latest risk metrics and sample-relative high-risk categories."""
-    context = get_asset_context(asset_id, data_dir)
+    context = get_asset_context(asset_id, data_dir, financial_data_source)
     risk_row = context["risk"]
     risk_sample = context["risk_sample"]
 
@@ -331,20 +353,21 @@ def generate_asset_report(
     weight_mode: str = "default_expert_weight",
     scenario_result: dict[str, Any] | None = None,
     output_format: str = "markdown",
+    financial_data_source: str = "demo",
 ) -> str:
     """Generate a deterministic Markdown report for one asset."""
     if output_format != "markdown":
         raise ValueError("Only markdown output_format is currently supported.")
 
-    context = get_asset_context(asset_id, data_dir)
+    context = get_asset_context(asset_id, data_dir, financial_data_source)
     asset = context["asset"]
     financial = context["financial"]
     operation = context["operation"]
     service = context["service_quality"]
     risk = context["risk"]
-    gatekeeper = summarize_gatekeeper(asset_id, data_dir)
-    score = summarize_score(asset_id, data_dir, weight_mode)
-    risk_summary = summarize_risk(asset_id, data_dir)
+    gatekeeper = summarize_gatekeeper(asset_id, data_dir, financial_data_source)
+    score = summarize_score(asset_id, data_dir, weight_mode, financial_data_source)
+    risk_summary = summarize_risk(asset_id, data_dir, financial_data_source)
     validity = _validity_summary(data_dir)
     suggestions = generate_management_suggestions(score, gatekeeper, risk_summary, context, scenario_result)
 
