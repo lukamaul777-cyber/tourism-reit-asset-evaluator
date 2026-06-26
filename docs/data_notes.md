@@ -83,6 +83,15 @@ AKShare public financial data may be returned in RMB yuan. The project internall
 
 NOI, AFFO, estimated distribution, maintenance CAPEX, and related derived fields may remain estimated for the MVP unless they are directly verified from source documents.
 
+The REIT Fit Score A module uses the selected financial dataset to calculate public-financial-data-driven indicators where possible:
+
+- `derived_ocf_margin = operating_cash_flow / revenue`, positive direction.
+- `derived_debt_ratio = debt_ratio`, or `total_debt / total_assets` when `debt_ratio` is missing, negative direction.
+- `derived_revenue_stability = clip(1 - abs(revenue_t - revenue_t_minus_1) / revenue_t_minus_1, 0, 1)`, positive direction.
+- `derived_ocf_stability = clip(1 - abs(operating_cash_flow_t - operating_cash_flow_t_minus_1) / abs(operating_cash_flow_t_minus_1), 0, 1)`, positive direction.
+
+These derived indicators are recalculated from whichever financial source is selected in the app. The demo file in `data/financial_metrics.csv` is not overwritten by the verified workflow or by scoring.
+
 The Streamlit app defaults to the demo financial dataset for deployment stability. After running `python scripts/update_public_financial_data.py`, users can switch the sidebar financial data source to the verified public financial dataset. If the verified file is missing, the app automatically falls back to the demo dataset and displays a warning.
 
 ## Windows Path Notes

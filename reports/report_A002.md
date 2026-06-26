@@ -5,7 +5,7 @@
 - Asset name: Tianmu Lake
 - Asset type: Scenic resort
 - Gatekeeper overall status: Pass with Warning
-- REITs suitability score: 34.6
+- REITs suitability score: 39.2
 - Rating level: Not Suitable
 - Scenario severity: No scenario provided
 - Conclusion: Tianmu Lake is classified as Not Suitable with a Pass with Warning Regulatory Gatekeeper status in this portfolio prototype.
@@ -31,7 +31,7 @@ This review is a regulatory-style portfolio prototype screen. It is not an offic
 
 ## REITs Suitability Score
 
-- Total score: 34.6
+- Total score: 39.2
 - Rating level: Not Suitable
 - Strongest module: D. Risk Management and Resilience (78.6)
 - Weakest module: E. Data Maturity and Smart Operation (0.0)
@@ -39,7 +39,7 @@ This review is a regulatory-style portfolio prototype screen. It is not an offic
 
 | Module | Score | Valid Indicators | Missing Indicators |
 | --- | ---: | ---: | ---: |
-| A. REITs Cash Flow and Distribution Capacity | 25.00 | 2 | 2 |
+| A. REITs Cash Flow and Distribution Capacity | 40.28 | 6 | 2 |
 | B. Tourism Operating Quality | 22.90 | 4 | 0 |
 | C. Service Quality and Online Reputation | 63.86 | 3 | 0 |
 | D. Risk Management and Resilience | 78.57 | 3 | 0 |
@@ -84,12 +84,12 @@ Risk interpretation is sample-relative in the MVP and does not represent officia
 
 ## Model Validity and Limitations
 
-- Content validity: 17 indicators are mapped to reference frameworks and validation notes.
+- Content validity: 21 indicators are mapped to reference frameworks and validation notes.
 - Cronbach's Alpha applicability: Cronbach's Alpha is 0.997. A value of 0.70 is a common rule-of-thumb for internal consistency, not an absolute law. Apply this only to survey-scale or multi-item service-quality dimensions, not ordinary financial ratios.
 - AHP consistency: AHP consistency check not run because no pairwise matrix was provided.
 - Sensitivity analysis: Ran 500 module-weight perturbation simulations at +/- 10%. Weights were re-normalized to sum to 100 in each simulation. This tests ranking robustness, not future operating scenarios.
-- Ranking stability ratio: 100.0%
-- Average Spearman correlation: 1.000
+- Ranking stability ratio: 89.8%
+- Average Spearman correlation: 0.949
 - Demo data limitation: demo data may include simulated or mixed values.
 - Small-sample limitation: the current sample is too small for broad statistical inference.
 

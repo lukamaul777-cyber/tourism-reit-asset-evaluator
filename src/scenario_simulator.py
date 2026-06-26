@@ -294,6 +294,38 @@ def simulate_asset_scenario(
         "derived_affo_distribution_coverage",
         distribution_coverage_after,
     )
+    _set_if_column_exists(
+        adjusted_scoring_df,
+        row_index,
+        "derived_ocf_margin",
+        _safe_divide(operating_cash_flow_after, revenue_after),
+    )
+    previous_revenue = _to_float(base_row.get("derived_previous_revenue"))
+    previous_ocf = _to_float(base_row.get("derived_previous_operating_cash_flow"))
+    adjusted_revenue_stability = None
+    if revenue_after is not None and previous_revenue is not None and previous_revenue > 0:
+        adjusted_revenue_stability = max(
+            0.0,
+            min(1.0, 1 - abs(revenue_after - previous_revenue) / previous_revenue),
+        )
+    adjusted_ocf_stability = None
+    if operating_cash_flow_after is not None and previous_ocf is not None and abs(previous_ocf) > 0:
+        adjusted_ocf_stability = max(
+            0.0,
+            min(1.0, 1 - abs(operating_cash_flow_after - previous_ocf) / abs(previous_ocf)),
+        )
+    _set_if_column_exists(
+        adjusted_scoring_df,
+        row_index,
+        "derived_revenue_stability",
+        adjusted_revenue_stability,
+    )
+    _set_if_column_exists(
+        adjusted_scoring_df,
+        row_index,
+        "derived_ocf_stability",
+        adjusted_ocf_stability,
+    )
     scenario_revenue_productivity = revpar_after if revpar_after is not None and revpar_after > 0 else average_spending_after
     _set_if_column_exists(
         adjusted_scoring_df,

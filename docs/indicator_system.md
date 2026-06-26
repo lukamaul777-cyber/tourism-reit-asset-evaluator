@@ -38,6 +38,19 @@ The 100-point model uses peer min-max normalization on latest available year dat
 
 This module evaluates whether the asset can generate stable, recurring, market-based operating cash flow that can support distributable cash flow.
 
+The MVP scoring implementation now uses the following available A-module inputs when present. Each indicator is still normalized through the same peer min-max logic as the rest of the 100-point model:
+
+| Indicator | Formula | Direction | Meaning |
+| --- | --- | --- | --- |
+| A1 Positive Operating Cash Flow Track Record | `positive_operating_cash_flow_years / available_recent_years` | Positive | Checks whether recent disclosed operating cash flow is consistently positive. |
+| A2 Distributable Cash Flow Coverage | `estimated_affo / estimated_distribution` | Positive | Tests whether AFFO-style distributable cash flow can cover expected distribution. |
+| A5 Operating Cash Flow Margin | `operating_cash_flow / revenue` | Positive | Measures how efficiently revenue turns into operating cash flow. |
+| A6 Debt Ratio | `debt_ratio`, or `total_debt / total_assets` when `debt_ratio` is missing | Negative | Measures leverage pressure; lower leverage receives a higher peer-normalized score. |
+| A7 Revenue Stability | `clip(1 - abs(revenue_t - revenue_t_minus_1) / revenue_t_minus_1, 0, 1)` | Positive | Measures recent year-over-year revenue stability. |
+| A8 Operating Cash Flow Stability | `clip(1 - abs(operating_cash_flow_t - operating_cash_flow_t_minus_1) / abs(operating_cash_flow_t_minus_1), 0, 1)` | Positive | Measures recent year-over-year operating cash flow stability. |
+
+A3 Revenue Marketization Ratio and A4 DCF Valuation Support remain documented framework indicators, but they are excluded from module averages when the required inputs are unavailable in the MVP tables.
+
 ### B. Tourism Operating Quality
 
 This module evaluates demand stability, utilization, revenue productivity, and seasonality.

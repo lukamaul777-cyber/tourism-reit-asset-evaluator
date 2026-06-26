@@ -6,9 +6,10 @@ import pandas as pd
 import streamlit as st
 
 from src.chart_utils import make_indicator_bar_chart, make_module_score_radar
-from src.data_loader import get_asset_options
+from src.data_loader import get_asset_options, get_financial_data_source_label
 from src.data_source_ui import render_financial_data_source_selector
 from src.i18n import (
+    current_language,
     language_selector,
     localize_dataframe,
     t,
@@ -27,6 +28,10 @@ def main() -> None:
     _selected_financial_source, effective_financial_source, _did_fallback = render_financial_data_source_selector()
     st.title(t("score.title"))
     st.caption(t("score.subtitle"))
+    st.caption(
+        f"{t('data_source.current_financial_data_source')}: "
+        f"{get_financial_data_source_label(effective_financial_source, current_language())}"
+    )
     st.info(t("score.notice"))
 
     try:

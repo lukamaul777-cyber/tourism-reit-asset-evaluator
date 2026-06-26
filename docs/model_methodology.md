@@ -50,6 +50,12 @@ The default expert-weighted model uses five modules:
 | D. Risk Management and Resilience | 15 |
 | E. Data Maturity and Smart Operation | 15 |
 
+The A-module total weight remains 30 in the default expert-weighted mode. Its internal scoring inputs have been expanded so verified public financial fields can affect the REITs cash-flow score without changing the overall five-module structure. In addition to positive operating cash-flow history and AFFO/distribution coverage, the scoring implementation uses operating cash-flow margin, debt ratio, revenue stability, and operating cash-flow stability when those values can be computed from the selected financial dataset.
+
+Operating cash-flow margin is calculated as `operating_cash_flow / revenue` and is a positive indicator. Debt ratio uses the reported `debt_ratio` field when present; if it is missing, the model calculates `total_debt / total_assets`. Debt ratio is a negative indicator, so lower leverage receives a higher peer-normalized score. Revenue stability uses `clip(1 - abs(revenue_t - revenue_t_minus_1) / revenue_t_minus_1, 0, 1)` and operating cash-flow stability uses `clip(1 - abs(operating_cash_flow_t - operating_cash_flow_t_minus_1) / abs(operating_cash_flow_t_minus_1), 0, 1)`. Both stability indicators are positive indicators.
+
+These additions still use the existing peer min-max normalization and missing-value policy. No machine-learning model, hard regulatory threshold, or fabricated missing-value fill is introduced.
+
 ## Reference Basis
 
 The scoring framework is based on established regulatory, industry, and academic frameworks, including China public infrastructure REITs requirements, REITs cash-flow concepts such as FFO/AFFO, real estate performance measurement guidance, DCF valuation guidance, tourism statistics, service-quality frameworks, enterprise risk management frameworks, climate disclosure frameworks, and data maturity standards.

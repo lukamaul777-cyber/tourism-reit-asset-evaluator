@@ -10,10 +10,10 @@ evaluation_layers:
     description: 100-point scoring model applied only after gatekeeper review.
 indicators:
   - indicator_id: A1
-    indicator_name: Net Operating Cash Flow Stability
+    indicator_name: Positive Operating Cash Flow Track Record
     module: A. REITs Cash Flow and Distribution Capacity
-    definition: Stability of recurring operating cash flow over the historical review period.
-    formula: "1 - coefficient_of_variation(annual_net_operating_cash_flow)"
+    definition: Share of recent available years with positive operating cash flow.
+    formula: "positive_operating_cash_flow_years / available_recent_years"
     direction: positive
     data_source_type: public_disclosure
     reference_framework: CSRC public infrastructure REITs guidelines; NDRC infrastructure REITs project application requirements
@@ -57,6 +57,54 @@ indicators:
     validation_method: Review valuation report assumptions against market evidence and historical operating data.
     reliability_method: Independent reviewer scoring and sensitivity analysis on discount rate and terminal assumptions.
     whether_it_is_required: false
+  - indicator_id: A5
+    indicator_name: Operating Cash Flow Margin
+    module: A. REITs Cash Flow and Distribution Capacity
+    definition: Ability to convert revenue into operating cash flow in the latest available year.
+    formula: "operating_cash_flow / revenue"
+    direction: positive
+    data_source_type: public_disclosure
+    reference_framework: NAREIT FFO/AFFO concept; EPRA Best Practices Recommendations
+    reference_note: Higher cash conversion supports recurring distribution capacity and operating resilience.
+    validation_method: Reconcile revenue and operating cash flow to the same reporting period and reporting entity boundary.
+    reliability_method: Peer range checks and year-over-year review for one-off cash-flow movements.
+    whether_it_is_required: true
+  - indicator_id: A6
+    indicator_name: Debt Ratio
+    module: A. REITs Cash Flow and Distribution Capacity
+    definition: Leverage pressure measured by reported debt ratio, or total debt divided by total assets if the reported ratio is unavailable.
+    formula: "debt_ratio if available else total_debt / total_assets"
+    direction: negative
+    data_source_type: public_disclosure
+    reference_framework: CSRC public infrastructure REITs guidelines; EPRA Best Practices Recommendations
+    reference_note: Lower leverage supports cash-flow resilience and reduces asset-level financial pressure.
+    validation_method: Reconcile total debt, total assets, and reported debt ratio to public financial statements.
+    reliability_method: Compare reported and calculated ratios, and review outliers against peer leverage levels.
+    whether_it_is_required: true
+  - indicator_id: A7
+    indicator_name: Revenue Stability
+    module: A. REITs Cash Flow and Distribution Capacity
+    definition: Latest two-year revenue stability based on the absolute year-over-year revenue change.
+    formula: "clip(1 - abs(revenue_t - revenue_t_minus_1) / revenue_t_minus_1, 0, 1)"
+    direction: positive
+    data_source_type: public_disclosure
+    reference_framework: CSRC public infrastructure REITs guidelines; NDRC infrastructure REITs project application requirements; EPRA Best Practices Recommendations
+    reference_note: Stable revenue supports recurring cash-flow quality for tourism infrastructure assets.
+    validation_method: Reconcile annual revenue to comparable reporting periods and adjust interpretation for one-off closures or business-scope changes.
+    reliability_method: Review alternative historical windows when more years become available.
+    whether_it_is_required: true
+  - indicator_id: A8
+    indicator_name: Operating Cash Flow Stability
+    module: A. REITs Cash Flow and Distribution Capacity
+    definition: Latest two-year operating cash flow stability based on the absolute year-over-year operating cash flow change.
+    formula: "clip(1 - abs(operating_cash_flow_t - operating_cash_flow_t_minus_1) / abs(operating_cash_flow_t_minus_1), 0, 1)"
+    direction: positive
+    data_source_type: public_disclosure
+    reference_framework: CSRC public infrastructure REITs guidelines; NDRC infrastructure REITs project application requirements; NAREIT FFO/AFFO concept
+    reference_note: Stable operating cash flow strengthens recurring distribution capacity beyond a simple positive-cash-flow check.
+    validation_method: Reconcile operating cash flow to audited cash flow statements and review material non-recurring movements.
+    reliability_method: Review alternative historical windows and scenario sensitivity as longer verified histories become available.
+    whether_it_is_required: true
   - indicator_id: B1
     indicator_name: Visitor or Guest Volume Stability
     module: B. Tourism Operating Quality

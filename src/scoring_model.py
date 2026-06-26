@@ -66,6 +66,61 @@ def _safe_divide(numerator: pd.Series, denominator: pd.Series) -> pd.Series:
     return numerator / denominator
 
 
+def _latest_two_year_stability(
+    df: pd.DataFrame,
+    value_col: str,
+    denominator_abs: bool = False,
+) -> pd.Series:
+    rows: list[dict[str, Any]] = []
+    if df.empty or value_col not in df.columns:
+        return pd.Series(dtype="Float64", name=f"derived_{value_col}_stability")
+
+    history = df[["asset_id", "year", value_col]].copy()
+    history["year"] = pd.to_numeric(history["year"], errors="coerce")
+    history[value_col] = pd.to_numeric(history[value_col], errors="coerce")
+    history = history.dropna(subset=["asset_id", "year", value_col]).sort_values(["asset_id", "year"])
+
+    for asset_id, group in history.groupby("asset_id"):
+        recent = group.tail(2)
+        if len(recent) < 2:
+            rows.append({"asset_id": asset_id, "stability": pd.NA})
+            continue
+
+        previous_value = float(recent.iloc[0][value_col])
+        latest_value = float(recent.iloc[1][value_col])
+        denominator = abs(previous_value) if denominator_abs else previous_value
+        if denominator <= 0:
+            rows.append({"asset_id": asset_id, "stability": pd.NA})
+            continue
+
+        stability = 1 - abs(latest_value - previous_value) / denominator
+        rows.append({"asset_id": asset_id, "stability": max(0.0, min(1.0, stability))})
+
+    if not rows:
+        return pd.Series(dtype="Float64", name=f"derived_{value_col}_stability")
+    return pd.DataFrame(rows).set_index("asset_id")["stability"].rename(f"derived_{value_col}_stability")
+
+
+def _previous_year_value(df: pd.DataFrame, value_col: str) -> pd.Series:
+    if df.empty or value_col not in df.columns:
+        return pd.Series(dtype="Float64", name=f"derived_previous_{value_col}")
+
+    history = df[["asset_id", "year", value_col]].copy()
+    history["year"] = pd.to_numeric(history["year"], errors="coerce")
+    history[value_col] = pd.to_numeric(history[value_col], errors="coerce")
+    history = history.dropna(subset=["asset_id", "year", value_col]).sort_values(["asset_id", "year"])
+    rows: list[dict[str, Any]] = []
+
+    for asset_id, group in history.groupby("asset_id"):
+        recent = group.tail(2)
+        previous_value = pd.NA if len(recent) < 2 else recent.iloc[0][value_col]
+        rows.append({"asset_id": asset_id, f"derived_previous_{value_col}": previous_value})
+
+    if not rows:
+        return pd.Series(dtype="Float64", name=f"derived_previous_{value_col}")
+    return pd.DataFrame(rows).set_index("asset_id")[f"derived_previous_{value_col}"]
+
+
 def _combine_source_notes(row: pd.Series, prefixes: list[str]) -> tuple[str, str]:
     data_types = []
     source_notes = []
@@ -96,6 +151,7 @@ def _combine_source_notes(row: pd.Series, prefixes: list[str]) -> tuple[str, str
 def load_scoring_data(
     data_dir: str | Path = "data",
     financial_data_source: str = "demo",
+    selected_source: str | None = None,
 ) -> tuple[pd.DataFrame, dict[str, pd.DataFrame]]:
     """Load and merge latest-year data for the scoring model.
 
@@ -104,6 +160,9 @@ def load_scoring_data(
     tuple
         ``(merged_latest_year_dataframe, raw_table_dictionary)``.
     """
+    if selected_source is not None:
+        financial_data_source = selected_source
+
     base_dir = _resolve_data_dir(data_dir)
     tables = {
         "assets": pd.read_csv(base_dir / "assets.csv"),
@@ -147,6 +206,19 @@ def load_scoring_data(
     )
     merged_df = merged_df.merge(ocf_positive_ratio, on="asset_id", how="left")
 
+    revenue_stability = _latest_two_year_stability(financial_history, "revenue").rename(
+        "derived_revenue_stability"
+    )
+    ocf_stability = _latest_two_year_stability(
+        financial_history,
+        "operating_cash_flow",
+        denominator_abs=True,
+    ).rename("derived_ocf_stability")
+    previous_revenue = _previous_year_value(financial_history, "revenue")
+    previous_ocf = _previous_year_value(financial_history, "operating_cash_flow")
+    for derived_series in [revenue_stability, ocf_stability, previous_revenue, previous_ocf]:
+        merged_df = merged_df.merge(derived_series, on="asset_id", how="left")
+
     operation_history = tables["operation_metrics"].copy()
     operation_history["visitor_volume"] = pd.to_numeric(operation_history["visitor_volume"], errors="coerce")
     visitor_stability = (
@@ -162,6 +234,19 @@ def load_scoring_data(
     merged_df["derived_affo_distribution_coverage"] = _safe_divide(
         pd.to_numeric(merged_df["financial_metrics_estimated_affo"], errors="coerce"),
         pd.to_numeric(merged_df["financial_metrics_estimated_distribution"], errors="coerce"),
+    )
+    merged_df["derived_ocf_margin"] = _safe_divide(
+        pd.to_numeric(merged_df["financial_metrics_operating_cash_flow"], errors="coerce"),
+        pd.to_numeric(merged_df["financial_metrics_revenue"], errors="coerce"),
+    )
+    reported_debt_ratio = pd.to_numeric(merged_df.get("financial_metrics_debt_ratio"), errors="coerce")
+    calculated_debt_ratio = _safe_divide(
+        pd.to_numeric(merged_df["financial_metrics_total_debt"], errors="coerce"),
+        pd.to_numeric(merged_df["financial_metrics_total_assets"], errors="coerce"),
+    )
+    merged_df["derived_debt_ratio"] = reported_debt_ratio.where(
+        reported_debt_ratio.notna(),
+        calculated_debt_ratio,
     )
     merged_df["derived_revenue_productivity"] = pd.to_numeric(
         merged_df["operation_metrics_revpar"],
@@ -273,6 +358,27 @@ def _scoring_indicator_map() -> list[dict[str, Any]]:
             "value_column": None,
             "source_prefixes": ["financial_metrics"],
             "missing_reason": "DCF valuation support score is not available in the MVP data template.",
+        },
+        {
+            "indicator_id": "A5",
+            "value_column": "derived_ocf_margin",
+            "source_prefixes": ["financial_metrics"],
+        },
+        {
+            "indicator_id": "A6",
+            "value_column": "derived_debt_ratio",
+            "source_prefixes": ["financial_metrics"],
+            "direction_override": "negative",
+        },
+        {
+            "indicator_id": "A7",
+            "value_column": "derived_revenue_stability",
+            "source_prefixes": ["financial_metrics"],
+        },
+        {
+            "indicator_id": "A8",
+            "value_column": "derived_ocf_stability",
+            "source_prefixes": ["financial_metrics"],
         },
         {
             "indicator_id": "B1",
@@ -579,8 +685,12 @@ def run_scoring_pipeline(
     data_dir: str | Path = "data",
     weight_mode: str = "default_expert_weight",
     financial_data_source: str = "demo",
+    selected_source: str | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Run the full scoring pipeline."""
+    if selected_source is not None:
+        financial_data_source = selected_source
+
     scoring_df, _tables = load_scoring_data(data_dir, financial_data_source)
     indicator_config = _load_yaml(_config_path("indicator_framework.yml"))
     indicator_scores_df = calculate_indicator_scores(scoring_df, indicator_config)
