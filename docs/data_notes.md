@@ -94,6 +94,16 @@ These derived indicators are recalculated from whichever financial source is sel
 
 The Streamlit app defaults to the demo financial dataset for deployment stability. After running `python scripts/update_public_financial_data.py`, users can switch the sidebar financial data source to the verified public financial dataset. If the verified file is missing, the app automatically falls back to the demo dataset and displays a warning.
 
+## Field Source Labels
+
+The verified public financial dataset is not a full official-data replacement for every analytical field. The project separates field sources into three transparent categories in `config/field_source_map.yml`:
+
+- `verified_public`: selected public financial fields such as `revenue`, `operating_cash_flow`, `total_assets`, `total_debt`, and `debt_ratio`.
+- `model_derived`: indicators calculated at scoring time, including `derived_ocf_margin`, `derived_debt_ratio`, `derived_revenue_stability`, `derived_ocf_stability`, `derived_ocf_positive_ratio_past3`, and `derived_affo_distribution_coverage`.
+- `estimated_demo_proxy`: fields that may remain estimated, demo-derived, or proxy-based, such as `noi`, `maintenance_capex`, `estimated_affo`, `estimated_distribution`, operation fields, service-quality fields, risk fields, and digital-maturity fields.
+
+Field source labels do not change scoring formulas, weights, or peer-normalization logic. They only improve transparency and explainability. Derived indicators such as A5-A8 are calculated during scoring and are not written back to the raw financial CSV files.
+
 ## Windows Path Notes
 
 Use `pathlib.Path` in Python code where possible. Configuration paths should avoid hard-coded path separators so the project remains compatible with Windows development environments.

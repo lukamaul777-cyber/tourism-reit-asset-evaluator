@@ -22,6 +22,8 @@ First-stage public replacements are limited to fields that are commonly availabl
 
 Fields such as `ebitda`, `noi`, `maintenance_capex`, `estimated_affo`, `estimated_distribution`, and `capex_to_ocf` may remain estimated because listed companies do not always disclose them directly in a project-compatible way.
 
+The verified dataset is therefore not a full official-data replacement for every field in the model. It follows a field-level transparency design: selected public financial fields can be verified, scoring-time indicators are labeled as model-derived, and remaining estimated/demo/proxy fields stay explicitly labeled.
+
 ## Source Policy
 
 Public data fetching may depend on third-party open-source interfaces such as AKShare. AKShare is optional and is not required for normal app operation.
@@ -73,3 +75,13 @@ Ratio fields such as `debt_ratio` are not converted as monetary values. They rem
 This workflow does not convert estimated fields into official data. It does not create official financial disclosures, investment advice, credit ratings, valuation opinions, or regulatory conclusions.
 
 If live fetching fails because AKShare is not installed, a remote endpoint changes, or network access is unavailable, the project still runs with the existing demo dataset.
+
+## Field Source Classification
+
+Field source labels are maintained in `config/field_source_map.yml` and surfaced in the Streamlit pages and generated reports. The labels distinguish:
+
+- verified public data: `revenue`, `operating_cash_flow`, `total_assets`, `total_debt`, and `debt_ratio`;
+- model-derived indicators: A-module derived indicators such as `derived_ocf_margin`, `derived_debt_ratio`, `derived_revenue_stability`, and `derived_ocf_stability`;
+- estimated/demo/proxy data: fields such as `noi`, `estimated_affo`, `estimated_distribution`, `maintenance_capex`, operation metrics, service-quality metrics, risk metrics, and digital-maturity metrics.
+
+These labels do not alter scoring logic or weights. They are a transparency layer so users can distinguish public-data inputs from model-derived or estimated fields.

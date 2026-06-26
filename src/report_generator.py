@@ -35,6 +35,14 @@ RISK_COLUMNS = {
 }
 
 
+FIELD_SOURCE_DISCLOSURE = (
+    "Selected core financial fields in this report are sourced from public financial data "
+    "and standardized to RMB million. Some indicators are model-derived. NOI, AFFO, "
+    "estimated distribution, and maintenance CAPEX may remain model-estimated or "
+    "demo-derived and should not be interpreted as official disclosed figures."
+)
+
+
 def _resolve_data_dir(data_dir: str | Path) -> Path:
     path = Path(data_dir)
     if not path.is_absolute():
@@ -441,6 +449,8 @@ The score is a portfolio demonstration output and is not an official rating.
 - AFFO proxy: {format_number(_safe_value(financial, 'estimated_affo'))}
 - Estimated distribution: {format_number(_safe_value(financial, 'estimated_distribution'))}
 - Distribution coverage: {format_number(coverage)}
+
+Field source note: {FIELD_SOURCE_DISCLOSURE}
 """
 
     if scenario_result:
@@ -497,6 +507,7 @@ Risk interpretation is sample-relative in the MVP and does not represent officia
 ## Disclaimer
 
 This report is generated for portfolio demonstration and asset management support.
+{FIELD_SOURCE_DISCLOSURE}
 It is not investment advice.
 It is not a credit rating.
 It is not a valuation opinion.

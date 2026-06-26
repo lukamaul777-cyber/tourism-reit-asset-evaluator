@@ -118,6 +118,18 @@ en:
     A6: Debt Ratio
     A7: Revenue Stability
     A8: OCF Stability
+  field_source:
+    title: Field Source Notes
+    column: Field Source
+    note: Source Note
+    fields: Fields
+    verified_public: Verified public data
+    model_derived: Model-derived indicator
+    estimated_demo_proxy: Estimated, demo, or proxy data
+    unknown: Unknown source
+    legend_note: Field source labels distinguish public financial data, model-derived indicators, and estimated/demo data.
+    module_a_note: Field source labels distinguish public financial data, model-derived indicators, and estimated/demo data. A5-A8 are calculated at scoring time and are not written back to the raw financial data table.
+    report_note: Selected core financial fields in generated reports may come from public financial data; derived and estimated fields are labeled separately in the methodology notes.
   columns:
     asset_id: Asset ID
     asset_name: Asset Name
@@ -255,6 +267,7 @@ en:
     regulatory_gatekeeper_status: 'Regulatory Gatekeeper status:'
     gatekeeper_unavailable: Gatekeeper results are unavailable for this asset.
     financial_unavailable: Latest financial metrics are unavailable for this asset.
+    financial_field_source_note: In verified mode, revenue, operating cash flow, total assets, total debt, and debt ratio may come from public financial data. NOI, AFFO, maintenance CAPEX, and estimated distribution may remain estimated or demo-derived.
     operation_unavailable: Latest operation metrics are unavailable for this asset.
     gatekeeper_failed: 'Gatekeeper checks failed: {error}'
   indicator:
@@ -631,6 +644,18 @@ zh:
     A6: "\u8D44\u4EA7\u8D1F\u503A\u7387"
     A7: "\u6536\u5165\u7A33\u5B9A\u6027"
     A8: "\u7ECF\u8425\u73B0\u91D1\u6D41\u7A33\u5B9A\u6027"
+  field_source:
+    title: "字段来源说明"
+    column: "字段来源"
+    note: "来源说明"
+    fields: "字段"
+    verified_public: "已核验公开数据"
+    model_derived: "模型派生指标"
+    estimated_demo_proxy: "估算 / 示例 / 代理数据"
+    unknown: "未知来源"
+    legend_note: "字段来源用于区分公开财务数据、模型派生指标和估算/示例数据。"
+    module_a_note: "字段来源用于区分公开财务数据、模型派生指标和估算/示例数据。A5-A8 为模型运行时计算的派生指标，不会写回原始财务数据表。"
+    report_note: "自动报告中的部分核心财务字段可能来自公开财务数据；派生和估算字段会在方法说明中单独标注。"
   columns:
     asset_id: "\u8D44\u4EA7ID"
     asset_name: "\u8D44\u4EA7\u540D\u79F0"
@@ -760,6 +785,7 @@ zh:
     regulatory_gatekeeper_status: "\u76D1\u7BA1\u51C6\u5165\u68C0\u67E5\u72B6\u6001\uFF1A"
     gatekeeper_unavailable: "\u8BE5\u8D44\u4EA7\u7684\u51C6\u5165\u68C0\u67E5\u7ED3\u679C\u4E0D\u53EF\u7528\u3002"
     financial_unavailable: "\u8BE5\u8D44\u4EA7\u7684\u6700\u65B0\u8D22\u52A1\u6307\u6807\u4E0D\u53EF\u7528\u3002"
+    financial_field_source_note: "在 verified 模式下，收入、经营现金流、总资产、总负债和资产负债率可来自公开财务数据；NOI、AFFO、维护性资本开支和估算分派等字段仍可能为估算或示例值。"
     operation_unavailable: "\u8BE5\u8D44\u4EA7\u7684\u6700\u65B0\u8FD0\u8425\u6307\u6807\u4E0D\u53EF\u7528\u3002"
     gatekeeper_failed: "\u51C6\u5165\u68C0\u67E5\u5931\u8D25\uFF1A{error}"
   indicator:

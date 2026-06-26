@@ -29,6 +29,7 @@ Public infrastructure REITs underlying assets require stable operating cash flow
 - **Model Reliability / Validity / Robustness Checks**: content validity, Cronbach's Alpha, AHP status, and weight sensitivity analysis.
 - **Data Quality / Data Confidence Assessment**: completeness, source reliability, traceability, timeliness, and coverage checks for demo inputs.
 - **Optional Verified Public Financial Data Pipeline**: reviewable replacement workflow for selected listed-company financial fields.
+- **Field Source Labels**: UI and report notes distinguish verified public fields, model-derived indicators, and estimated/demo/proxy fields.
 - **Scenario Simulator**: stress-test style revenue, demand, cost, CAPEX, and reputation shocks.
 - **Automatic Report Generator**: deterministic Markdown asset reports.
 - **English / Simplified Chinese UI Switching**: sidebar language selector backed by `config/translations.yml`.
@@ -99,6 +100,7 @@ tourism-reit-asset-evaluator/
 |-- app.py
 |-- config/
 |   |-- data_source.yml
+|   |-- field_source_map.yml
 |   |-- indicator_framework.yml
 |   |-- model_references.yml
 |   |-- scoring_weights.yml
@@ -140,11 +142,14 @@ tourism-reit-asset-evaluator/
 |   |-- report_A002.md
 |   `-- report_A003.md
 |-- scripts/
+|   |-- compare_demo_verified_scores.py
 |   |-- final_check.py
+|   |-- inspect_indicator_details.py
 |   |-- run_model_validity_checks.py
 |   |-- update_public_financial_data.py
 |   |-- validate_data_quality.py
 |   |-- validate_data_files.py
+|   |-- validate_field_source_map.py
 |   |-- validate_project_config.py
 |   |-- validate_translations.py
 |   `-- validate_verified_financial_data.py
@@ -177,6 +182,7 @@ Run validation and backend checks:
 
 ```powershell
 python scripts/validate_project_config.py
+python scripts/validate_field_source_map.py
 python scripts/validate_translations.py
 python scripts/validate_data_files.py
 python scripts/validate_data_quality.py
@@ -209,6 +215,12 @@ python scripts/validate_verified_financial_data.py
 Review [docs/verified_data_workflow.md](docs/verified_data_workflow.md) and `data_verified/replacement_preview.csv` before using generated verified outputs.
 
 After verified outputs are generated, use the app sidebar to switch between `Demo Dataset` and `Verified Public Financial Dataset`. Verified data replaces only selected public financial fields; `NOI`, `AFFO`, `estimated_distribution`, `maintenance_capex`, and related fields may still be estimated. Monetary fields are standardized to RMB million, while ratio fields such as `debt_ratio` remain decimal ratios.
+
+## Field Source Labels
+
+The verified public financial dataset is not a full official-data replacement for every analytical field. The project uses a transparent design: selected public financial fields are verified where possible, model-derived indicators are calculated at scoring time, and estimated/demo/proxy fields remain explicitly labeled.
+
+Field source labels are configured in [config/field_source_map.yml](config/field_source_map.yml). They do not change scoring results, formulas, or weights. They improve interpretability by showing which fields are public financial inputs, which are model-derived indicators, and which may still be estimated or demo-derived. The scoring pipeline does not write A5-A8 or other derived indicators back to `data/financial_metrics.csv` or `data_verified/financial_metrics_verified.csv`.
 
 ## Language Switching
 

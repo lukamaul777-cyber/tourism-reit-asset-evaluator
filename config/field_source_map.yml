@@ -1,0 +1,67 @@
+financial_metrics:
+  verified_public:
+    fields:
+      - revenue
+      - operating_cash_flow
+      - total_assets
+      - total_debt
+      - debt_ratio
+    label_en: Verified public data
+    label_zh: 已核验公开数据
+    note_en: Sourced from public financial data and standardized for project use.
+    note_zh: 来自公开财务数据，并已按项目口径进行标准化处理。
+
+  model_derived:
+    fields:
+      - derived_ocf_margin
+      - derived_debt_ratio
+      - derived_revenue_stability
+      - derived_ocf_stability
+      - derived_ocf_positive_ratio_past3
+      - derived_affo_distribution_coverage
+    label_en: Model-derived indicator
+    label_zh: 模型派生指标
+    note_en: Calculated at scoring time based on financial inputs and model formulas.
+    note_zh: 根据财务输入和模型公式在评分运行时计算得到。
+
+  estimated_demo_proxy:
+    fields:
+      - ebitda
+      - noi
+      - maintenance_capex
+      - estimated_affo
+      - estimated_distribution
+      - capex_to_ocf
+      - visitor_volume
+      - occupancy_rate
+      - adr
+      - revpar
+      - average_spending_per_visitor
+      - secondary_spending_ratio
+      - peak_season_revenue_ratio
+      - ota_score
+      - review_count
+      - tangibles_score
+      - reliability_score
+      - responsiveness_score
+      - assurance_score
+      - empathy_score
+      - complaint_rate
+      - seasonality_risk
+      - market_competition_risk
+      - policy_risk
+      - climate_physical_risk
+      - financial_pressure_risk
+      - platform_dependency_risk
+      - risk_disclosure_score
+      - data_availability_score
+      - data_quality_score
+      - smart_operation_score
+      - online_reservation_score
+      - visitor_flow_monitoring_score
+      - public_opinion_monitoring_score
+      - dashboard_monitoring_score
+    label_en: Estimated, demo, or proxy data
+    label_zh: 估算 / 示例 / 代理数据
+    note_en: May be estimated, demo-derived, or proxy-based and should not be interpreted as official disclosure.
+    note_zh: 可能来自估算、示例数据或代理口径，不应理解为官方披露值。

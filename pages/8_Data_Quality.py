@@ -13,6 +13,7 @@ from src.chart_utils import (
 )
 from src.data_loader import get_asset_options
 from src.data_source_ui import render_financial_data_source_selector
+from src.field_source_utils import get_field_source_legend
 from src.data_quality import (
     calculate_all_data_confidence_scores,
     calculate_data_confidence_score,
@@ -107,6 +108,24 @@ def localize_data_quality_values(df: pd.DataFrame) -> pd.DataFrame:
     return display_df
 
 
+def render_field_source_notes(language: str) -> None:
+    legend_df = get_field_source_legend(language=language)
+    if legend_df.empty:
+        return
+
+    display_df = legend_df.rename(
+        columns={
+            "field_source_label": t("field_source.column"),
+            "field_source_note": t("field_source.note"),
+            "fields": t("field_source.fields"),
+        }
+    )[[t("field_source.column"), t("field_source.note"), t("field_source.fields")]]
+
+    st.subheader(t("field_source.title"))
+    st.caption(t("field_source.legend_note"))
+    st.dataframe(display_df, use_container_width=True, hide_index=True)
+
+
 def report_file_name(asset_id: str) -> str:
     return f"tourism_reit_data_quality_{asset_id}.md"
 
@@ -198,6 +217,8 @@ def main() -> None:
         st.plotly_chart(make_data_type_distribution_chart(data_type_df), use_container_width=True)
     with dist_table_col:
         st.dataframe(localize_data_quality_values(data_type_df), use_container_width=True, hide_index=True)
+
+    render_field_source_notes(language)
 
     st.subheader(t("data_quality.missingness_summary"))
     if selected_table != "__all__":

@@ -8,6 +8,7 @@ import streamlit as st
 from src.chart_utils import make_indicator_bar_chart, make_module_score_radar
 from src.data_loader import get_asset_options, get_financial_data_source_label
 from src.data_source_ui import render_financial_data_source_selector
+from src.field_source_utils import classify_field_source
 from src.i18n import (
     current_language,
     language_selector,
@@ -23,6 +24,14 @@ from src.scoring_model import ENTROPY_PLACEHOLDER_MESSAGE, run_scoring_pipeline
 st.set_page_config(page_title="REIT Fit Score", layout="wide")
 
 MODULE_A_NAME = "A. REITs Cash Flow and Distribution Capacity"
+MODULE_A_FIELD_MAP = {
+    "A1": "derived_ocf_positive_ratio_past3",
+    "A2": "derived_affo_distribution_coverage",
+    "A5": "derived_ocf_margin",
+    "A6": "derived_debt_ratio",
+    "A7": "derived_revenue_stability",
+    "A8": "derived_ocf_stability",
+}
 
 
 def indicator_display_name(row: pd.Series) -> str:
@@ -117,6 +126,14 @@ def normalize_module_a_indicator_details(
         if current_language() == "zh"
         else "Indicator calculated or loaded at scoring time."
     )
+    module_a_indicators["field_name"] = module_a_indicators["indicator_id"].map(MODULE_A_FIELD_MAP)
+    module_a_indicators["field_source_display"] = module_a_indicators["field_name"].map(
+        lambda field_name: classify_field_source(
+            str(field_name),
+            dataset_name="financial_metrics",
+            language=current_language(),
+        )["field_source_label"]
+    )
 
     display_df = module_a_indicators[
         [
@@ -126,6 +143,7 @@ def normalize_module_a_indicator_details(
             "normalized_score",
             "direction_display",
             "included_display",
+            "field_source_display",
             "data_note_display",
         ]
     ].rename(
@@ -136,6 +154,7 @@ def normalize_module_a_indicator_details(
             "normalized_score": t("score.normalized_score"),
             "direction_display": t("score.direction"),
             "included_display": t("score.included_in_score"),
+            "field_source_display": t("field_source.column"),
             "data_note_display": t("score.data_note"),
         }
     )
@@ -248,6 +267,7 @@ def main() -> None:
 
     st.subheader(t("score.module_a_indicator_details_title"))
     st.caption(t("score.module_a_indicator_details_note"))
+    st.caption(t("field_source.module_a_note"))
     render_module_a_indicator_details(selected_indicators)
 
     st.subheader(t("score.module_table"))

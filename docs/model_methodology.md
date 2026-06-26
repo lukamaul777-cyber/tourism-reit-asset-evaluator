@@ -68,6 +68,10 @@ Demo data may include simulated values. Simulated values must be clearly labeled
 
 The model should distinguish among public disclosure data, publicly collected data, survey data, simulated data, and manual assessment data. Indicator-level source requirements are maintained in `config/indicator_framework.yml`.
 
+The field source label layer adds a second, user-facing distinction for analytical fields. It identifies selected public financial fields, model-derived indicators, and estimated/demo/proxy fields in `config/field_source_map.yml`. This does not change the scoring model, module weights, normalization method, or missing-value policy. It only makes the provenance of displayed fields easier to understand.
+
+The project intentionally uses a hybrid transparency design: selected public financial fields can be verified and standardized, derived indicators are calculated at runtime from the selected data source, and fields such as NOI, AFFO proxy, estimated distribution, maintenance CAPEX, operation metrics, service metrics, risk fields, and digital-maturity fields may remain estimated or demo-derived unless separately verified.
+
 ## Data Quality / Data Confidence Layer
 
 The Data Quality / Data Confidence layer evaluates whether the input dataset is transparent enough to support interpretation. It is separate from the Regulatory Gatekeeper and the 100-point REITs suitability score.

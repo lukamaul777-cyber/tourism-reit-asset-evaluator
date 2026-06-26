@@ -13,11 +13,20 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from src.field_source_utils import classify_field_source  # noqa: E402
 from src.scoring_model import MODULE_ORDER, run_scoring_pipeline  # noqa: E402
 
 
 MODULE_A = MODULE_ORDER[0]
 REQUIRED_INDICATORS = ["A1", "A2", "A5", "A6", "A7", "A8"]
+REQUIRED_FIELD_MAP = {
+    "A1": "derived_ocf_positive_ratio_past3",
+    "A2": "derived_affo_distribution_coverage",
+    "A5": "derived_ocf_margin",
+    "A6": "derived_debt_ratio",
+    "A7": "derived_revenue_stability",
+    "A8": "derived_ocf_stability",
+}
 PAGE_PATH = PROJECT_ROOT / "pages" / "3_REIT_Fit_Score.py"
 DISPLAY_COLUMNS = [
     "asset_id",
@@ -82,6 +91,10 @@ def inspect_source(source: str) -> list[str]:
                 warnings.append(
                     f"{source} {asset_id} {row.indicator_id}: raw_value or normalized_score is missing."
                 )
+        for indicator_id, field_name in REQUIRED_FIELD_MAP.items():
+            label = classify_field_source(field_name, language="en")["field_source_label"]
+            if label != "Model-derived indicator":
+                warnings.append(f"{source} {asset_id} {indicator_id}: field source is {label}, expected model-derived.")
 
     return warnings
 
@@ -114,6 +127,10 @@ def main() -> int:
         warnings.append("Page helper unexpectedly reported missing Module A records: " + ", ".join(missing_ids))
     if display_df.empty:
         warnings.append("Page helper returned an empty display dataframe for fallback-column test.")
+    if "Field Source" not in display_df.columns:
+        warnings.append("Page helper display dataframe is missing the Field Source column.")
+    elif set(display_df["Field Source"].astype(str)) != {"Model-derived indicator"}:
+        warnings.append("Page helper did not label all Module A details as model-derived indicators.")
 
     if warnings:
         print("\nWARNING")
@@ -124,6 +141,7 @@ def main() -> int:
     print("\nSuccess summary")
     print("A1, A2, and A5-A8 indicator-level details are present for all assets.")
     print("A5-A8 include raw_value and normalized_score for all assets.")
+    print("A1, A2, and A5-A8 are classified as model-derived indicators.")
     print("Module A page helper tolerates missing optional display columns.")
     return 0
 

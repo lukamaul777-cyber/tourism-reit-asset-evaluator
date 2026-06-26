@@ -183,6 +183,7 @@ def main() -> None:
     st.caption(t("report.subtitle"))
     st.info(t("report.intro"))
     st.warning(t("report.disclaimer"))
+    st.caption(t("field_source.report_note"))
     st.caption(t("report.language_note"))
 
     try:

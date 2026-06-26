@@ -7,8 +7,9 @@ import streamlit as st
 
 from src.data_loader import get_asset_options, get_latest_year_data, load_all_data
 from src.data_source_ui import render_financial_data_source_selector
+from src.field_source_utils import get_field_source_legend
 from src.gatekeeper import run_gatekeeper_checks
-from src.i18n import language_selector, localize_dataframe, t, translate_column_name, translate_status
+from src.i18n import current_language, language_selector, localize_dataframe, t, translate_column_name, translate_status
 
 
 st.set_page_config(page_title="Asset Profile", layout="wide")
@@ -58,6 +59,24 @@ def format_metric_table(df: pd.DataFrame) -> pd.io.formats.style.Styler:
     display_df = localize_dataframe(df)
     display_format_map = {translate_column_name(column): fmt for column, fmt in format_map.items()}
     return display_df.style.format(display_format_map, na_rep=t("common.data_unavailable"))
+
+
+def render_field_source_legend() -> None:
+    legend_df = get_field_source_legend(language=current_language())
+    if legend_df.empty:
+        return
+
+    display_df = legend_df.rename(
+        columns={
+            "field_source_label": t("field_source.column"),
+            "field_source_note": t("field_source.note"),
+            "fields": t("field_source.fields"),
+        }
+    )[[t("field_source.column"), t("field_source.note"), t("field_source.fields")]]
+
+    st.caption(t("asset_profile.financial_field_source_note"))
+    with st.expander(t("field_source.title"), expanded=False):
+        st.dataframe(display_df, use_container_width=True, hide_index=True)
 
 
 def main() -> None:
@@ -136,6 +155,7 @@ def main() -> None:
             st.info(t("asset_profile.financial_unavailable"))
         else:
             st.dataframe(format_metric_table(selected_financial), use_container_width=True, hide_index=True)
+            render_field_source_legend()
 
     with operation_tab:
         if selected_operation.empty:

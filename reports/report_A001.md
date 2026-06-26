@@ -56,6 +56,8 @@ The score is a portfolio demonstration output and is not an official rating.
 - Estimated distribution: 400.00
 - Distribution coverage: 1.18
 
+Field source note: Selected core financial fields in this report are sourced from public financial data and standardized to RMB million. Some indicators are model-derived. NOI, AFFO, estimated distribution, and maintenance CAPEX may remain model-estimated or demo-derived and should not be interpreted as official disclosed figures.
+
 ## Tourism Operation and Service Quality
 
 - Visitor volume: 3,520,000
@@ -102,6 +104,7 @@ Risk interpretation is sample-relative in the MVP and does not represent officia
 ## Disclaimer
 
 This report is generated for portfolio demonstration and asset management support.
+Selected core financial fields in this report are sourced from public financial data and standardized to RMB million. Some indicators are model-derived. NOI, AFFO, estimated distribution, and maintenance CAPEX may remain model-estimated or demo-derived and should not be interpreted as official disclosed figures.
 It is not investment advice.
 It is not a credit rating.
 It is not a valuation opinion.
