@@ -32,6 +32,17 @@ ENTROPY_PLACEHOLDER_MESSAGE = (
     "Entropy weighting is reserved for future expansion and requires a larger verified dataset."
 )
 
+INDICATOR_NAME_ZH = {
+    "A1": "正经营现金流记录",
+    "A2": "AFFO 分派覆盖率",
+    "A3": "收入市场化比例",
+    "A4": "DCF 估值支撑",
+    "A5": "经营现金流率",
+    "A6": "资产负债率",
+    "A7": "收入稳定性",
+    "A8": "经营现金流稳定性",
+}
+
 
 def _project_root() -> Path:
     return Path(__file__).resolve().parents[1]
@@ -500,13 +511,19 @@ def calculate_indicator_scores(
                     "asset_id": source_row["asset_id"],
                     "asset_name": source_row["asset_name"],
                     "module": module,
+                    "module_name": module,
                     "indicator_id": indicator_id,
                     "indicator_name": indicator_name,
+                    "indicator_name_en": indicator_name,
+                    "indicator_name_zh": INDICATOR_NAME_ZH.get(indicator_id, indicator_name),
                     "raw_value": raw_value,
                     "indicator_score": indicator_score,
+                    "normalized_score": indicator_score,
                     "direction": direction,
+                    "included_in_score": not pd.isna(indicator_score),
                     "data_type": data_type,
                     "source_note": source_note,
+                    "data_note": source_note,
                     "explanation": explanation,
                 }
             )

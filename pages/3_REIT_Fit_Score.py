@@ -22,6 +22,146 @@ from src.scoring_model import ENTROPY_PLACEHOLDER_MESSAGE, run_scoring_pipeline
 
 st.set_page_config(page_title="REIT Fit Score", layout="wide")
 
+MODULE_A_NAME = "A. REITs Cash Flow and Distribution Capacity"
+
+
+def indicator_display_name(row: pd.Series) -> str:
+    """Return localized indicator name while preserving scoring output fallback."""
+    language = current_language()
+    indicator_id = str(row.get("indicator_id", ""))
+    translated = t(f"indicator_names.{indicator_id}", "")
+    if translated:
+        return translated
+    if language == "zh" and "indicator_name_zh" in row and pd.notna(row["indicator_name_zh"]):
+        return str(row["indicator_name_zh"])
+    if language == "en" and "indicator_name_en" in row and pd.notna(row["indicator_name_en"]):
+        return str(row["indicator_name_en"])
+    return str(row.get("indicator_name", row.get("indicator_id", "")))
+
+
+def localize_direction(value: object) -> str:
+    if value is None or pd.isna(value) or str(value).strip() == "":
+        return t("score.unknown")
+    return t(f"directions.{value}", str(value))
+
+
+def localize_included(value: object) -> str:
+    return t("score.included_yes") if bool(value) else t("score.included_no")
+
+
+def normalize_module_a_indicator_details(
+    selected_indicators: pd.DataFrame,
+) -> tuple[pd.DataFrame, list[str]]:
+    """Build a display dataframe for Module A details without assuming optional columns exist."""
+    expected_ids = ["A1", "A2", "A5", "A6", "A7", "A8"]
+    if selected_indicators.empty or "indicator_id" not in selected_indicators.columns:
+        return pd.DataFrame(), expected_ids
+
+    source_df = selected_indicators.copy()
+    if "module" in source_df.columns:
+        source_df = source_df[source_df["module"] == MODULE_A_NAME].copy()
+
+    module_a_indicators = source_df[source_df["indicator_id"].isin(expected_ids)].copy()
+    if module_a_indicators.empty:
+        return pd.DataFrame(), expected_ids
+
+    missing_ids = [
+        indicator_id
+        for indicator_id in expected_ids
+        if indicator_id not in set(module_a_indicators["indicator_id"].astype(str))
+    ]
+
+    if "normalized_score" not in module_a_indicators.columns:
+        if "score" in module_a_indicators.columns:
+            module_a_indicators["normalized_score"] = module_a_indicators["score"]
+        elif "indicator_score" in module_a_indicators.columns:
+            module_a_indicators["normalized_score"] = module_a_indicators["indicator_score"]
+        else:
+            module_a_indicators["normalized_score"] = pd.NA
+
+    if "raw_value" not in module_a_indicators.columns:
+        module_a_indicators["raw_value"] = pd.NA
+
+    if "included_in_score" not in module_a_indicators.columns:
+        normalized_values = pd.to_numeric(module_a_indicators["normalized_score"], errors="coerce")
+        module_a_indicators["included_in_score"] = normalized_values.notna()
+    else:
+        module_a_indicators["included_in_score"] = module_a_indicators["included_in_score"].fillna(False).astype(bool)
+
+    if "direction" not in module_a_indicators.columns:
+        module_a_indicators["direction"] = t("score.unknown")
+
+    if "data_note" not in module_a_indicators.columns:
+        if "source_note" in module_a_indicators.columns:
+            module_a_indicators["data_note"] = module_a_indicators["source_note"]
+        else:
+            module_a_indicators["data_note"] = (
+                "模型运行时计算或读取的指标。"
+                if current_language() == "zh"
+                else "Indicator calculated or loaded at scoring time."
+            )
+
+    for column in ["indicator_name", "indicator_name_en", "indicator_name_zh"]:
+        if column not in module_a_indicators.columns:
+            module_a_indicators[column] = pd.NA
+
+    module_a_indicators["sort_order"] = module_a_indicators["indicator_id"].map(
+        {indicator_id: index for index, indicator_id in enumerate(expected_ids)}
+    )
+    module_a_indicators = module_a_indicators.sort_values("sort_order")
+    module_a_indicators["indicator_display_name"] = module_a_indicators.apply(indicator_display_name, axis=1)
+    module_a_indicators["included_display"] = module_a_indicators["included_in_score"].map(localize_included)
+    module_a_indicators["direction_display"] = module_a_indicators["direction"].map(localize_direction)
+    module_a_indicators["data_note_display"] = module_a_indicators["data_note"].fillna(
+        "模型运行时计算或读取的指标。"
+        if current_language() == "zh"
+        else "Indicator calculated or loaded at scoring time."
+    )
+
+    display_df = module_a_indicators[
+        [
+            "indicator_id",
+            "indicator_display_name",
+            "raw_value",
+            "normalized_score",
+            "direction_display",
+            "included_display",
+            "data_note_display",
+        ]
+    ].rename(
+        columns={
+            "indicator_id": t("score.indicator_id"),
+            "indicator_display_name": t("score.indicator_name"),
+            "raw_value": t("score.raw_value"),
+            "normalized_score": t("score.normalized_score"),
+            "direction_display": t("score.direction"),
+            "included_display": t("score.included_in_score"),
+            "data_note_display": t("score.data_note"),
+        }
+    )
+    return display_df, missing_ids
+
+
+def render_module_a_indicator_details(selected_indicators: pd.DataFrame) -> None:
+    display_df, missing_ids = normalize_module_a_indicator_details(selected_indicators)
+    if missing_ids:
+        st.warning(t("score.module_a_missing_indicator_warning", ids=", ".join(missing_ids)))
+    if display_df.empty:
+        st.info(t("score.module_a_indicator_details_unavailable"))
+        return
+
+    st.dataframe(
+        display_df.style.format(
+            {
+                t("score.raw_value"): "{:.3f}",
+                t("score.normalized_score"): "{:.1f}",
+            },
+            na_rep=t("score.missing"),
+        ),
+        use_container_width=True,
+        hide_index=True,
+    )
+
 
 def main() -> None:
     language_selector()
@@ -106,6 +246,10 @@ def main() -> None:
         else:
             st.plotly_chart(make_indicator_bar_chart(indicator_scores_df, asset_id), use_container_width=True)
 
+    st.subheader(t("score.module_a_indicator_details_title"))
+    st.caption(t("score.module_a_indicator_details_note"))
+    render_module_a_indicator_details(selected_indicators)
+
     st.subheader(t("score.module_table"))
     display_modules = localize_dataframe(selected_modules)
     st.dataframe(
@@ -145,4 +289,5 @@ def main() -> None:
     )
 
 
-main()
+if __name__ == "__main__":
+    main()
